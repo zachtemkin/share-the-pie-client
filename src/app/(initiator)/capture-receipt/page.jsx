@@ -6,24 +6,54 @@ import useDetectDevice from "../../hooks/useDetectDevice";
 import io from "socket.io-client";
 import styled from "styled-components";
 
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  border-radius: 3rem;
+  overflow: hidden;
+`;
+
+const CaptureButton = styled.button`
+  z-index: 2;
+  background-color: #FFFFFF;
+  width: 5rem;
+  height: 5rem;
+  border: none;
+  border-radius: 5rem;
+  position: fixed;
+  bottom: 3rem;
+`;
+
+const CameraPreview = styled.video`
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  background-size: cover;
+  overflow: hidden;
+  height: auto;
+  min-height: 100%;
+  width: auto;
+  object-fit: cover;
+`;
+
 const Camera = () => {
   const [imageData, setImageData] = useState("");
   const { isMobile } = useDetectDevice();
   const router = useRouter();
 
   const uploadDocument = async (imageData) => {
-    const socket = io("ws://leo.local:3000/");
+    const socket = io("ws://leo.local:4858/");
     const receiptImage = JSON.stringify({ data: imageData });
     socket.emit("receiptCaptured", receiptImage);
     console.log("ran upload document");
   };
 
-  // References for video and canvas elements
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [image, setImage] = useState("");
 
-  // Function to get the camera feed
   const getVideo = () => {
     const videoObj = isMobile
       ? {
@@ -35,26 +65,17 @@ const Camera = () => {
 
     navigator.mediaDevices
       .getUserMedia({
-        // video: {
-        //   facingMode: {
-        //     exact: "environment",
-        //   },
-        //   width: { ideal: 3264 / 2 },
-        //   height: { ideal: 2448 / 2 },
-        // },
         video: videoObj,
       })
       .then((stream) => {
         let video = videoRef.current;
         video.srcObject = stream;
-        video.play();
       })
       .catch((err) => {
         console.error("error:", err);
       });
   };
 
-  // Function to take a picture
   const takePicture = () => {
     const width = 3264 / 2;
     const height = 2448 / 2;
@@ -84,25 +105,16 @@ const Camera = () => {
     }
   }, [imageData, router]);
 
-  const CaptureButton = styled.button`
-    background-color: #fff;
-    width: 80px;
-    height: 80px;
-    border: none;
-    border-radius: 40px;
-  `;
-
   return (
-    <div className='cameraContainer'>
-      <video
+    <Container>
+      <CameraPreview
         ref={videoRef}
-        className='camera'
-        autoPlay=''
-        muted=''
-        playsInline=''></video>
-      <CaptureButton className='shutter' onClick={takePicture}></CaptureButton>
+        autoPlay={true}
+        muted={true}
+        playsInline={true} />
+      <CaptureButton onClick={takePicture} />
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
-    </div>
+    </Container>
   );
 };
 

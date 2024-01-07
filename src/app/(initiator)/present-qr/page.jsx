@@ -4,8 +4,17 @@ import React, { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
 import styled from "styled-components";
 
+const Page = styled.div`
+  text-align: center;
+`
+
+const QRCode = styled.img`
+  filter: invert(1);
+  width: 400px;
+`;
+
 const QrPage = () => {
-  const socket = io("ws://leo.local:3000/");
+  const socket = io("ws://leo.local:4858/");
 
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [sessionMembers, setSessionMembers] = useState([]);
@@ -46,15 +55,6 @@ const QrPage = () => {
   //   useEffect(() => {
   //     console.log(connections);
   //   });
-
-  const Page = styled.div`
-    text-align: center;
-  `
-
-  const QRCode = styled.img`
-    filter: invert(1);
-    width: 400px;
-  `;
 
   return (
     <Page>
