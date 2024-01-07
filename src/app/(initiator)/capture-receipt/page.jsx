@@ -3,7 +3,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import useDetectDevice from "../../hooks/useDetectDevice";
-import io from "socket.io-client";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -43,14 +42,30 @@ const Camera = () => {
   const { isMobile } = useDetectDevice();
   const router = useRouter();
 
-  const uploadDocument = async (imageData) => {
-    const socket = io("ws://leo.local:4858/");
-    const receiptImage = JSON.stringify({ data: imageData });
-    socket.emit("receiptCaptured", receiptImage);
-    console.log("ran upload document");
-  };
+  async function uploadDocument(imageData) {
+    try {
+      const response = await fetch('https://leo.local:4000/parse', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image: imageData
+        })
+      });
 
-  const videoRef = useRef(null);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Success:', data);
+      return data;
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+    const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [image, setImage] = useState("");
 
