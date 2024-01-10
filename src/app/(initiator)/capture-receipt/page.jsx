@@ -3,84 +3,115 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import useDetectDevice from "../../hooks/useDetectDevice";
-import Webcam from "react-webcam";
-import io from "socket.io-client";
 import styled from "styled-components";
+
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  border-radius: 3rem;
+  overflow: hidden;
+`;
+
+const CaptureButton = styled.button`
+  z-index: 2;
+  background-color: #ffffff;
+  width: 5rem;
+  height: 5rem;
+  border: none;
+  border-radius: 5rem;
+  position: fixed;
+  bottom: 3rem;
+`;
+
+const CameraPreview = styled.video`
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  background-size: cover;
+  overflow: hidden;
+  height: auto;
+  min-height: 100%;
+  width: auto;
+  object-fit: cover;
+`;
 
 const Camera = () => {
   const [imageData, setImageData] = useState("");
   const { isMobile } = useDetectDevice();
   const router = useRouter();
 
-  const uploadDocument = async (imageData) => {
-    const socket = io("ws://leo.local:3000/");
-    const receiptImage = JSON.stringify({ data: imageData });
-    socket.emit("receiptCaptured", receiptImage);
-    console.log("ran upload document");
+  async function uploadDocument(imageData) {
+    try {
+      const response = await fetch("https://leo.local:4000/parse", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          image: imageData,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Success:", data);
+      return data;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const [image, setImage] = useState("");
+
+  const getVideo = () => {
+    const videoObj = isMobile
+      ? {
+          facingMode: { exact: "environment" },
+          width: { ideal: 3264 / 2 },
+          height: { ideal: 2448 / 2 },
+        }
+      : true;
+
+    navigator.mediaDevices
+      .getUserMedia({
+        video: videoObj,
+      })
+      .then((stream) => {
+        let video = videoRef.current;
+        video.srcObject = stream;
+      })
+      .catch((err) => {
+        console.error("error:", err);
+      });
   };
 
-  // References for video and canvas elements
-  // const videoRef = useRef(null);
-  // const canvasRef = useRef(null);
-  // const [image, setImage] = useState("");
+  const takePicture = () => {
+    const width = 3264 / 2;
+    const height = 2448 / 2;
+    let video = videoRef.current;
+    let canvas = canvasRef.current;
 
-  // Function to get the camera feed
-  // const getVideo = () => {
-  //   const videoObj = isMobile
-  //     ? {
-  //         facingMode: { exact: "environment" },
-  //         width: { ideal: 3264 / 2 },
-  //         height: { ideal: 2448 / 2 },
-  //       }
-  //     : {
-  //         facingMode: { exact: "user" },
-  //         width: { ideal: 3264 / 2 },
-  //         height: { ideal: 2448 / 2 },
-  //       };
+    canvas.width = width;
+    canvas.height = height;
 
-  //   navigator.mediaDevices
-  //     .getUserMedia({
-  //       // video: {
-  //       //   facingMode: {
-  //       //     exact: "environment",
-  //       //   },
-  //       //   width: { ideal: 3264 / 2 },
-  //       //   height: { ideal: 2448 / 2 },
-  //       // },
-  //       video: videoObj,
-  //     })
-  //     .then((stream) => {
-  //       let video = videoRef.current;
-  //       video.srcObject = stream;
-  //       video.play();
-  //     })
-  //     .catch((err) => {
-  //       console.error("error:", err);
-  //     });
-  // };
+    let ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0, width, height);
 
-  // Function to take a picture
-  // const takePicture = () => {
-  //   const width = 3264 / 2;
-  //   const height = 2448 / 2;
-  //   let video = videoRef.current;
-  //   let canvas = canvasRef.current;
+    let imageData = canvas.toDataURL("image/png");
+    setImage(imageData);
 
-  //   canvas.width = width;
-  //   canvas.height = height;
+    setImageData(imageData);
+  };
 
-  //   let ctx = canvas.getContext("2d");
-  //   ctx.drawImage(video, 0, 0, width, height);
-
-  //   let imageData = canvas.toDataURL("image/png");
-  //   setImage(imageData);
-
-  //   setImageData(imageData);
-  // };
-
-  // useEffect(() => {
-  //   getVideo();
-  // }, []);
+  useEffect(() => {
+    getVideo();
+  }, []);
 
   useEffect(() => {
     if (imageData) {
@@ -89,68 +120,17 @@ const Camera = () => {
     }
   }, [imageData, router]);
 
-  const CaptureButton = styled.button`
-    background-color: #fff;
-    width: 80px;
-    height: 80px;
-    border: none;
-    border-radius: 40px;
-  `;
-
-  const Camera = () => {
-    const webcamRef = useRef(null);
-
-    const videoConstraints = isMobile
-      ? {
-          facingMode: { exact: "environment" },
-          width: { ideal: 3264 / 2 },
-          height: { ideal: 2448 / 2 },
-        }
-      : {
-          facingMode: "user",
-          width: { ideal: 3264 / 2 },
-          height: { ideal: 2448 / 2 },
-        };
-
-    const capture = () => {
-      const imageSrc = webcamRef.current.getScreenshot();
-      setImageData(imageSrc);
-    };
-
-    return (
-      <div
-        style={{
-          width: "100%",
-          height: "100vh",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}>
-        <Webcam
-          audio={false}
-          ref={webcamRef}
-          screenshotFormat='image/jpeg'
-          videoConstraints={videoConstraints}
-          style={{ width: "100%", height: "100%" }}
-        />
-        <CaptureButton onClick={capture} />
-      </div>
-    );
-  };
-
   return (
-    <div className='cameraContainer'>
-      {/* <video
+    <Container>
+      <CameraPreview
         ref={videoRef}
-        className='camera'
-        autoPlay=''
-        muted=''
-        playsInline=''></video>
-      <CaptureButton className='shutter' onClick={takePicture}></CaptureButton>
-      <canvas ref={canvasRef} style={{ display: "none" }}></canvas> */}
-      <Camera />
-    </div>
+        autoPlay={true}
+        muted={true}
+        playsInline={true}
+      />
+      <CaptureButton onClick={takePicture} />
+      <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
+    </Container>
   );
 };
 

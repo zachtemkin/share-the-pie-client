@@ -2,13 +2,23 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
-// import styled from "styled-components";
+import styled from "styled-components";
+
+const Page = styled.div`
+  text-align: center;
+`
+
+const QRCode = styled.img`
+  filter: invert(1);
+  width: 400px;
+`;
 
 const QrPage = () => {
-  const socket = io("ws://leo.local:3000/");
+  const socket = io("ws://leo.local:4858/");
 
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [sessionMembers, setSessionMembers] = useState([]);
+  const [qrCode, setQrCode] = useState();
 
   useEffect(() => {
     function onConnect() {
@@ -22,6 +32,8 @@ const QrPage = () => {
 
     function onSessionStarted(data) {
       console.log(data);
+
+      setQrCode(data.qrCode);
     }
 
     socket.on("sessionStarted", onSessionStarted);
@@ -45,12 +57,12 @@ const QrPage = () => {
   //   });
 
   return (
-    <div>
-      <h1>{`QR Page`}</h1>
+    <Page>
+      <QRCode src={qrCode} draggable={false} />
       {sessionMembers.map(
         (member, index) => !member.isSessionCreator && <div key={index}>•</div>
       )}
-    </div>
+    </Page>
   );
 };
 
