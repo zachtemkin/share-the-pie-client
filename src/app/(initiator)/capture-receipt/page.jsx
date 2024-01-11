@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { useRouter } from "next/navigation";
 import useDetectDevice from "../../hooks/useDetectDevice";
 import styled from "styled-components";
+import { useAppContext } from "../../AppContext";
 
 const Container = styled.div`
   display: flex;
@@ -41,6 +42,8 @@ const Camera = () => {
   const [imageData, setImageData] = useState("");
   const { isMobile } = useDetectDevice();
   const router = useRouter();
+  // const { sessionId, setSessionId } = useContext(AppContext);
+  const { appState, setAppState } = useAppContext();
 
   async function uploadDocument(imageData) {
     try {
@@ -59,7 +62,6 @@ const Camera = () => {
       }
 
       const data = await response.json();
-      console.log("Success:", data);
       return data;
     } catch (error) {
       console.error("Error:", error);
@@ -67,7 +69,7 @@ const Camera = () => {
   }
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const [image, setImage] = useState("");
+  // const [image, setImage] = useState("");
 
   const getVideo = () => {
     const videoObj = isMobile
@@ -91,7 +93,7 @@ const Camera = () => {
       });
   };
 
-  const takePicture = () => {
+  const takePicture = async () => {
     const width = 3264 / 2;
     const height = 2448 / 2;
     let video = videoRef.current;
@@ -104,21 +106,32 @@ const Camera = () => {
     ctx.drawImage(video, 0, 0, width, height);
 
     let imageData = canvas.toDataURL("image/png");
-    setImage(imageData);
+    // setImage(imageData);
 
-    setImageData(imageData);
+    console.log("im taking a picture");
+
+    // setImageData(imageData);
+    // await uploadDocument(imageData);
+
+    let data = await uploadDocument(imageData);
+    console.log(data.sessionId);
+    setAppState({ sessionId: data.sessionId });
+    router.push("/add-handles");
+
+    // setTimeout(() => {
+    // }, 5000);
   };
 
   useEffect(() => {
     getVideo();
   }, []);
 
-  useEffect(() => {
-    if (imageData) {
-      uploadDocument(imageData);
-      router.push("/add-handles");
-    }
-  }, [imageData, router]);
+  // useEffect(() => {
+  //   if (imageData) {
+  //     uploadDocument(imageData);
+  //     router.push("/add-handles");
+  //   }
+  // }, [imageData, router]);
 
   return (
     <Container>

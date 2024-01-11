@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Button from "../../components/button";
+import { useAppContext } from "../../AppContext";
 
 const AddHandles = () => {
   const router = useRouter();
+  const { appState, setAppState } = useAppContext();
 
   const [initiatorData, setInitiatorData] = useState({
-    sessionId: "659f45f92dee0c5bd1d0d3ac",
+    sessionId: appState.sessionId,
     humanName: "",
     cashTag: "",
     venmoHandle: "",
@@ -30,16 +32,12 @@ const AddHandles = () => {
         },
         body: JSON.stringify(initiatorData),
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        // .then(advanceScreen);
-        console.log(data);
-        // Handle the response from the server as needed
-      } else {
-        console.error("Server response:", response.statusText);
-        // Handle the error as needed
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+      const data = await response.json();
+      console.log(data);
+      advanceScreen();
     } catch (error) {
       console.error("Error submitting form:", error);
       // Handle the error as needed
@@ -49,6 +47,10 @@ const AddHandles = () => {
   const advanceScreen = () => {
     router.push("/present-qr");
   };
+
+  useEffect(() => {
+    console.log(appState);
+  }, []);
 
   return (
     <div>
