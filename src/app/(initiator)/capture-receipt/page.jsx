@@ -44,7 +44,7 @@ const Camera = () => {
 
   async function uploadDocument(imageData) {
     try {
-      const response = await fetch("https://leo.local:4000/parse", {
+      const response = await fetch("https://localhost:4000/parseReceiptImage", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
