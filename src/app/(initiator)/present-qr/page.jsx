@@ -3,10 +3,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
 import styled from "styled-components";
+import { useAppContext } from "../../AppContext";
 
 const Page = styled.div`
   text-align: center;
-`
+`;
 
 const QRCode = styled.img`
   filter: invert(1);
@@ -14,11 +15,12 @@ const QRCode = styled.img`
 `;
 
 const QrPage = () => {
-  const socket = io("ws://leo.local:4858/");
+  const socket = io("ws://localhost:4858/");
 
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [sessionMembers, setSessionMembers] = useState([]);
   const [qrCode, setQrCode] = useState();
+  const { appState, setAppState } = useAppContext();
 
   useEffect(() => {
     function onConnect() {
@@ -27,7 +29,7 @@ const QrPage = () => {
     }
 
     socket.on("connect", onConnect);
-    socket.emit("startSession", { sessionId: "4809283" });
+    socket.emit("startSession", { sessionId: appState.sessionId });
     socket.emit("raiseHand", socket.id);
 
     function onSessionStarted(data) {
