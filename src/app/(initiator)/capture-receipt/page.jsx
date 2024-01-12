@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import useDetectDevice from "../../hooks/useDetectDevice";
 import styled from "styled-components";
@@ -42,7 +42,6 @@ const Camera = () => {
   const [imageData, setImageData] = useState("");
   const { isMobile } = useDetectDevice();
   const router = useRouter();
-  // const { sessionId, setSessionId } = useContext(AppContext);
   const { appState, setAppState } = useAppContext();
 
   async function uploadDocument(imageData) {
@@ -69,7 +68,6 @@ const Camera = () => {
   }
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  // const [image, setImage] = useState("");
 
   const getVideo = () => {
     const videoObj = isMobile
@@ -106,32 +104,19 @@ const Camera = () => {
     ctx.drawImage(video, 0, 0, width, height);
 
     let imageData = canvas.toDataURL("image/png");
-    // setImage(imageData);
 
     console.log("im taking a picture");
-
-    // setImageData(imageData);
-    // await uploadDocument(imageData);
 
     let data = await uploadDocument(imageData);
     console.log(data.sessionId);
     setAppState({ sessionId: data.sessionId });
     router.push("/add-handles");
-
-    // setTimeout(() => {
-    // }, 5000);
   };
 
   useEffect(() => {
+    appState.sessionId && router.push("/present-qr");
     getVideo();
   }, []);
-
-  // useEffect(() => {
-  //   if (imageData) {
-  //     uploadDocument(imageData);
-  //     router.push("/add-handles");
-  //   }
-  // }, [imageData, router]);
 
   return (
     <Container>

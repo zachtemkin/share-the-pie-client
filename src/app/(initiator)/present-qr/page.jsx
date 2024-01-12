@@ -3,6 +3,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
 import styled from "styled-components";
+import Button from "../../components/button";
+import { useRouter } from "next/navigation";
 import { useAppContext } from "../../AppContext";
 
 const Page = styled.div`
@@ -16,11 +18,11 @@ const QRCode = styled.img`
 
 const QrPage = () => {
   const socket = io("ws://localhost:4858/");
-
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [sessionMembers, setSessionMembers] = useState([]);
   const [qrCode, setQrCode] = useState();
   const { appState, setAppState } = useAppContext();
+  const router = useRouter();
 
   useEffect(() => {
     async function getQrCode(sessionId) {
@@ -38,9 +40,9 @@ const QrPage = () => {
 
         const data = await response.json();
 
-        console.log(data.url)
+        console.log(data.url);
 
-        setQrCode(data.qrCode)
+        setQrCode(data.qrCode);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -48,7 +50,7 @@ const QrPage = () => {
 
     getQrCode(appState.sessionId);
 
-    console.log('QR page:', appState.sessionId)
+    console.log("QR page:", appState.sessionId);
 
     function onConnect() {
       setIsConnected(true);
@@ -79,12 +81,21 @@ const QrPage = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (appState.sessionId == null) {
+      router.push("/capture-receipt");
+    }
+  }, [appState.sessionId, router]);
+
   return (
     <Page>
       <QRCode src={qrCode} draggable={false} />
       {sessionMembers.map(
         (member, index) => !member.isSessionCreator && <div key={index}>•</div>
       )}
+      <Button onClick={() => setAppState({ sessionId: null })}>
+        Close Session
+      </Button>
     </Page>
   );
 };
