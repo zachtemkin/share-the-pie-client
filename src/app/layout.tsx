@@ -22,7 +22,6 @@ export default function RootLayout({
           <link rel='manifest' href='/manifest.json' />
         </head>
         <body className={inter.className}>
-          <h1>1234</h1>
           {children}
         </body>
       </html>

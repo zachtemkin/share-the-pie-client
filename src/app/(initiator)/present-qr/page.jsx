@@ -23,6 +23,33 @@ const QrPage = () => {
   const { appState, setAppState } = useAppContext();
 
   useEffect(() => {
+    async function getQrCode(sessionId) {
+      try {
+        const response = await fetch("https://localhost:4000/generateQrCode", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ sessionId }),
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        console.log(data.url)
+
+        setQrCode(data.qrCode)
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+
+    getQrCode(appState.sessionId);
+
+    console.log('QR page:', appState.sessionId)
+
     function onConnect() {
       setIsConnected(true);
       console.log(`connected: ${isConnected}`);
@@ -34,8 +61,6 @@ const QrPage = () => {
 
     function onSessionStarted(data) {
       console.log(data);
-
-      setQrCode(data.qrCode);
     }
 
     socket.on("sessionStarted", onSessionStarted);
@@ -53,10 +78,6 @@ const QrPage = () => {
       socket.off("sessionMembersChanged", onSessionMembersChanged);
     };
   }, []);
-
-  //   useEffect(() => {
-  //     console.log(connections);
-  //   });
 
   return (
     <Page>
