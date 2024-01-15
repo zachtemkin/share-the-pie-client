@@ -3,7 +3,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
 import styled from "styled-components";
-import Button from "../../components/button";
+import Button from "@/app/components/button";
+import ItemsList from "@/app/components/itemsList";
 import { useRouter } from "next/navigation";
 import { useAppContext } from "../../AppContext";
 
@@ -96,6 +97,11 @@ const QrPage = () => {
       <Button onClick={() => setAppState({ sessionId: null })}>
         Close Session
       </Button>
+      {appState.sessionId && isConnected ? (
+        <ItemsList sessionId={appState.sessionId} />
+      ) : (
+        <p>nothing to see here</p>
+      )}
     </Page>
   );
 };

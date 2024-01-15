@@ -1,17 +1,16 @@
 "use client";
 
 import io from "socket.io-client";
-
-import React, { useState, useContext, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import Button from "../../components/button";
-import { useAppContext } from "../../AppContext";
+import React, { useState, useContext, useCallback, useEffect } from "react";
+// import { useRouter, useSearchParams } from "next/navigation";
+// import Button from "./button";
+// import { useAppContext } from "../../AppContext";
 import styled from "styled-components";
 
 const Items = styled.ul`
   width: 100%;
   list-style-type: none;
-`
+`;
 
 const Item = styled.li`
   width: calc(100% - 2rem);
@@ -29,20 +28,13 @@ const Item = styled.li`
     color: rgba(0, 0, 0, 1);
     background: rgba(255, 255, 255, 0.05);
   }
-`
+`;
 
-const Description = styled.span`
-  
-`
+const Description = styled.span``;
 
-const Price = styled.span`
-  
-`
+const Price = styled.span``;
 
-const ViewItems = () => {
-  const searchParams = useSearchParams()
-  const sessionId = searchParams.get("sessionId")
-
+const ItemsList = ({ sessionId }) => {
   const socket = io("ws://localhost:4858/");
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [sessionMembers, setSessionMembers] = useState([]);
@@ -60,7 +52,7 @@ const ViewItems = () => {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [socket]);
+  }, [socket, sessionId, myCheckedItems]);
 
   useEffect(() => {
     socket.on("connect", () => {
@@ -68,14 +60,18 @@ const ViewItems = () => {
     });
 
     socket.on("itemsStatusChanged", (data) => {
-      setItems(items => items.map(item =>
-        item.id === data.itemId ? { ...item, isChecked: data.isChecked } : item
-      ));
+      setItems((items) =>
+        items.map((item) =>
+          item.id === data.itemId
+            ? { ...item, isChecked: data.isChecked }
+            : item
+        )
+      );
     });
 
     const onSessionMembersChanged = (data) => {
       setSessionMembers(data.sessionMembers);
-    }
+    };
 
     socket.on("sessionMembersChanged", onSessionMembersChanged);
 
@@ -92,14 +88,14 @@ const ViewItems = () => {
         }
 
         const data = await response.json();
-        
-        setReceiptData(data)
+
+        setReceiptData(data);
 
         setItems(data.items);
       } catch (error) {
         console.error("Error:", error);
       }
-    }
+    };
 
     getReceiptData(sessionId);
 
@@ -122,7 +118,11 @@ const ViewItems = () => {
             item.isChecked = false;
             item.isCheckedByMe = false;
 
-            setMyCheckedItems(myCheckedItems.filter(myCheckedItem => myCheckedItem.id !== itemId));
+            setMyCheckedItems(
+              myCheckedItems.filter(
+                (myCheckedItem) => myCheckedItem.id !== itemId
+              )
+            );
           } else {
             alert("Someone else has already checked this item!");
           }
@@ -131,7 +131,7 @@ const ViewItems = () => {
           item.isChecked = true;
           item.isCheckedByMe = true;
 
-          setMyCheckedItems(myCheckedItems => [...myCheckedItems, item]);
+          setMyCheckedItems((myCheckedItems) => [...myCheckedItems, item]);
         }
         return item;
       } else {
@@ -142,28 +142,70 @@ const ViewItems = () => {
     setItems(updatedItems);
   };
 
+  const [mySubTotals, setMySubtotals] = useState({
+    myItems: 0,
+    myTip: 0,
+    myTax: 0,
+  });
+
+  const calculateSubtotals = useCallback(
+    (myCheckedItems) => {
+      if (receiptData && receiptData.transaction) {
+        let checkedItemsPrices = [];
+        myCheckedItems.map((checkedItem) => {
+          checkedItemsPrices.push(checkedItem.price);
+        });
+
+        let myItems = checkedItemsPrices.reduce(
+          (acc, current) => acc + current,
+          0
+        );
+
+        let myTip =
+          (myItems / receiptData.transaction.items) *
+          receiptData.transaction.tip;
+
+        let myTax =
+          (myItems / receiptData.transaction.items) *
+          receiptData.transaction.tax;
+
+        setMySubtotals({ myItems, myTip, myTax });
+        console.log({ myItems, myTip, myTax });
+      }
+    },
+    [receiptData]
+  );
+
+  useEffect(() => {
+    calculateSubtotals(myCheckedItems);
+  }, [myCheckedItems, calculateSubtotals]);
+
   return (
     <>
       <p>Socket: {isConnected ? "Connected" : "Disconnected"}</p>
       <div>
         {sessionMembers.map(
-          (member, index) => !member.isSessionCreator && <span key={index}>•</span>
+          (member, index) =>
+            !member.isSessionCreator && <span key={index}>•</span>
         )}
       </div>
       <Items>
-        {items && items.map((item, index) =>
-          <Item
-            key={item.id}
-            className={`${item.isChecked && "isChecked"} ${item.isChecked && !item.isCheckedByMe && "isNotCheckedByMe"}`}
-            onClick={() => handleItemClick(item.id)}>
-            <Description>{item.description}</Description>
-            <Price>{item.price}</Price>
-            <div>Me? {item.isCheckedByMe ? "yes" : "no"}</div>
-          </Item>
-        )}
+        {items &&
+          items.map((item, index) => (
+            <Item
+              key={item.id}
+              className={`${item.isChecked && "isChecked"} ${
+                item.isChecked && !item.isCheckedByMe && "isNotCheckedByMe"
+              }`}
+              onClick={() => handleItemClick(item.id)}>
+              <Description>{item.description}</Description>
+              <Price>{item.price}</Price>
+              <div>Me? {item.isCheckedByMe ? "yes" : "no"}</div>
+            </Item>
+          ))}
       </Items>
     </>
   );
 };
 
-export default ViewItems;
+export default ItemsList;
