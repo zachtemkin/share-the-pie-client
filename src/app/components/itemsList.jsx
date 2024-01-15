@@ -34,7 +34,7 @@ const Description = styled.span``;
 
 const Price = styled.span``;
 
-const ItemsList = ({ sessionId }) => {
+const ItemsList = ({ sessionId, onSubtotalsChange }) => {
   const socket = io("ws://localhost:4858/");
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [sessionMembers, setSessionMembers] = useState([]);
@@ -142,12 +142,6 @@ const ItemsList = ({ sessionId }) => {
     setItems(updatedItems);
   };
 
-  const [mySubTotals, setMySubtotals] = useState({
-    myItems: 0,
-    myTip: 0,
-    myTax: 0,
-  });
-
   const calculateSubtotals = useCallback(
     (myCheckedItems) => {
       if (receiptData && receiptData.transaction) {
@@ -169,8 +163,7 @@ const ItemsList = ({ sessionId }) => {
           (myItems / receiptData.transaction.items) *
           receiptData.transaction.tax;
 
-        setMySubtotals({ myItems, myTip, myTax });
-        console.log({ myItems, myTip, myTax });
+        onSubtotalsChange({ myItems, myTip, myTax });
       }
     },
     [receiptData]

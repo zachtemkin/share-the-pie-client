@@ -88,6 +88,16 @@ const QrPage = () => {
     }
   }, [appState.sessionId, router]);
 
+  const [mySubTotals, setMySubtotals] = useState({
+    myItems: 0,
+    myTip: 0,
+    myTax: 0,
+  });
+
+  const handleSetMySubtotals = (newMySubtotals) => {
+    setMySubtotals(newMySubtotals);
+  };
+
   return (
     <Page>
       <QRCode src={qrCode} draggable={false} />
@@ -98,7 +108,7 @@ const QrPage = () => {
         Close Session
       </Button>
       {appState.sessionId && isConnected ? (
-        <ItemsList sessionId={appState.sessionId} />
+        <ItemsList sessionId={appState.sessionId} onSubtotalsChange={handleSetMySubtotals} />
       ) : (
         <p>nothing to see here</p>
       )}
