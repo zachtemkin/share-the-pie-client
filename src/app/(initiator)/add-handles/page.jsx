@@ -25,7 +25,7 @@ const AddHandles = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("https://sharethepie.app:9346/setInitiatorData", {
+      const response = await fetch("https://api.sharethepie.app/setInitiatorData", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

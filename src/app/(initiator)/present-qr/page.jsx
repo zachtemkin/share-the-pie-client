@@ -18,7 +18,7 @@ const QRCode = styled.img`
 `;
 
 const QrPage = () => {
-  const socket = io("ws://localhost:4858/");
+  const socket = io("ws://socket.sharethepie.app/");
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [sessionMembers, setSessionMembers] = useState([]);
   const [qrCode, setQrCode] = useState();
@@ -28,7 +28,7 @@ const QrPage = () => {
   useEffect(() => {
     async function getQrCode(sessionId) {
       try {
-        const response = await fetch("https://sharethepie.app:9346/generateQrCode", {
+        const response = await fetch("https://api.sharethepie.app/generateQrCode", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -35,7 +35,7 @@ const Description = styled.span``;
 const Price = styled.span``;
 
 const ItemsList = ({ sessionId, onSubtotalsChange }) => {
-  const socket = io("ws://localhost:4858/");
+  const socket = io("ws://socket.sharethepie.app/");
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [sessionMembers, setSessionMembers] = useState([]);
   const [receiptData, setReceiptData] = useState();
@@ -77,7 +77,7 @@ const ItemsList = ({ sessionId, onSubtotalsChange }) => {
 
     const getReceiptData = async (sessionId) => {
       try {
-        const response = await fetch("https://sharethepie.app:9346/getReceiptData", {
+        const response = await fetch("https://api.sharethepie.app/getReceiptData", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ sessionId }),
