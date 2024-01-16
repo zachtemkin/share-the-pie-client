@@ -28,7 +28,7 @@ const QrPage = () => {
   useEffect(() => {
     async function getQrCode(sessionId) {
       try {
-        const response = await fetch("https://localhost:4000/generateQrCode", {
+        const response = await fetch("https://sharethepie.app:9346/generateQrCode", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -46,7 +46,7 @@ const Camera = () => {
 
   async function uploadDocument(imageData) {
     try {
-      const response = await fetch("https://localhost:4000/parseReceiptImage", {
+      const response = await fetch("https://sharethepie.app:9346/parseReceiptImage", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

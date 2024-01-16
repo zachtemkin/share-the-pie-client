@@ -77,7 +77,7 @@ const ItemsList = ({ sessionId, onSubtotalsChange }) => {
 
     const getReceiptData = async (sessionId) => {
       try {
-        const response = await fetch("https://localhost:4000/getReceiptData", {
+        const response = await fetch("https://sharethepie.app:9346/getReceiptData", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ sessionId }),
