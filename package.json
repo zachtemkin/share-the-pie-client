@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "share-the-pie:dev": "next dev",
-    "share-the-pie:build": "next build",
-    "share-the-pie:start": "next start",
-    "share-the-pie:lint": "next lint"
+    "share-the-pie-client:dev": "next dev",
+    "share-the-pie-client:build": "next build",
+    "share-the-pie-client:start": "next start",
+    "share-the-pie-client:lint": "next lint"
   },
   "dependencies": {
     "@types/styled-components": "^5.1.34",
