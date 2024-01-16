@@ -6,7 +6,7 @@ export default function Home() {
     <main className={styles.main}>
       <div className={styles.description}>
         <p>
-          <code className={styles.code}>Test Deploy After New User</code>
+          <code className={styles.code}>Test Deploy With New User</code>
         </p>
         <div>
           <a
