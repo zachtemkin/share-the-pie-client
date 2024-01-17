@@ -35,7 +35,14 @@ const Description = styled.span``;
 const Price = styled.span``;
 
 const ItemsList = ({ sessionId, onSubtotalsChange }) => {
-  const socket = io("wss://sharethepie.app:4858");
+  let socket
+  
+  if(window.location.origin.includes('localhost')) {
+    socket = io("wss://localhost:4858");
+  } else {
+    socket = io("wss://sharethepie.app:4858");
+  }
+
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [sessionMembers, setSessionMembers] = useState([]);
   const [receiptData, setReceiptData] = useState();
