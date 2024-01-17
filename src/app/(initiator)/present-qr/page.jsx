@@ -18,7 +18,7 @@ const QRCode = styled.img`
 `;
 
 const QrPage = () => {
-  const socket = io("wss://socket.sharethepie.app/");
+  const socket = io("wss://sharethepie.app:4858");
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [sessionMembers, setSessionMembers] = useState([]);
   const [qrCode, setQrCode] = useState();
