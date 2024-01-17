@@ -6,6 +6,7 @@ import React, { useState, useContext, useCallback, useEffect } from "react";
 // import Button from "./button";
 // import { useAppContext } from "../../AppContext";
 import styled from "styled-components";
+import useChooseServer from "@/app/hooks/useChooseServer";
 
 const Items = styled.ul`
   width: 100%;
@@ -35,15 +36,7 @@ const Description = styled.span``;
 const Price = styled.span``;
 
 const ItemsList = ({ sessionId, onSubtotalsChange }) => {
-  let server = {};
-  if (window.location.origin.includes('localhost')) {
-    server.socket = "wss://localhost:4858";
-    server.api = "https://localhost:4000";
-  } else {
-    server.socket = "wss://sharethepie.app:4858";
-    server.api = "https://api.sharethepie.app";
-  }
-
+  const server = useChooseServer();
   const socket = io(server.socket);
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [sessionMembers, setSessionMembers] = useState([]);

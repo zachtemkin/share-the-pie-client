@@ -4,17 +4,10 @@ import React, { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Button from "../../components/button";
 import { useAppContext } from "../../AppContext";
+import useChooseServer from "@/app/hooks/useChooseServer";
 
 const AddHandles = () => {
-  let server = {};
-  if (window.location.origin.includes('localhost')) {
-    server.socket = "wss://localhost:4858";
-    server.api = "https://localhost:4000";
-  } else {
-    server.socket = "wss://sharethepie.app:4858";
-    server.api = "https://api.sharethepie.app";
-  }
-
+  const server = useChooseServer();
   const router = useRouter();
   const { appState, setAppState } = useAppContext();
 

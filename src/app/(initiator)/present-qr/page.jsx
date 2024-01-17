@@ -7,6 +7,7 @@ import Button from "@/app/components/button";
 import ItemsList from "@/app/components/itemsList";
 import { useRouter } from "next/navigation";
 import { useAppContext } from "../../AppContext";
+import useChooseServer from "@/app/hooks/useChooseServer";
 
 const Page = styled.div`
   text-align: center;
@@ -18,15 +19,7 @@ const QRCode = styled.img`
 `;
 
 const QrPage = () => {
-  let server = {};
-  if (window.location.origin.includes('localhost')) {
-    server.socket = "wss://localhost:4858";
-    server.api = "https://localhost:4000";
-  } else {
-    server.socket = "wss://sharethepie.app:4858";
-    server.api = "https://api.sharethepie.app";
-  }
-
+  const server = useChooseServer();
   const socket = io(server.socket);
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [sessionMembers, setSessionMembers] = useState([]);

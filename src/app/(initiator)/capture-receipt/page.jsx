@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import useDetectDevice from "../../hooks/useDetectDevice";
+import useDetectDevice from "@/app/hooks/useDetectDevice";
+import useChooseServer from "@/app/hooks/useChooseServer";
 import styled from "styled-components";
 import { useAppContext } from "../../AppContext";
 
@@ -39,15 +40,7 @@ const CameraPreview = styled.video`
 `;
 
 const Camera = () => {
-  let server = {};
-  if (window.location.origin.includes('localhost')) {
-    server.socket = "wss://localhost:4858";
-    server.api = "https://localhost:4000";
-  } else {
-    server.socket = "wss://sharethepie.app:4858";
-    server.api = "https://api.sharethepie.app";
-  }
-
+  const server = useChooseServer();
   const [imageData, setImageData] = useState("");
   const { isMobile } = useDetectDevice();
   const router = useRouter();
