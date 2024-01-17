@@ -50,29 +50,19 @@ const ItemsList = ({ sessionId, onSubtotalsChange }) => {
   const [receiptData, setReceiptData] = useState();
   const [items, setItems] = useState([]);
   const [myCheckedItems, setMyCheckedItems] = useState([]);
-
-  useEffect(() => {
-    const handleBeforeUnload = (event) => {
-      socket.emit("setMyCheckedItemsUnchecked", { sessionId, myCheckedItems });
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [socket, sessionId, myCheckedItems]);
+  const [socketId, setSocketId] = useState('');
 
   useEffect(() => {
     socket.on("connect", () => {
       setIsConnected(true);
+      setSocketId(socket.id);
     });
 
     socket.on("itemsStatusChanged", (data) => {
       setItems((items) =>
         items.map((item) =>
           item.id === data.itemId
-            ? { ...item, isChecked: data.isChecked }
+            ? { ...item, isChecked: data.isChecked, checkedBy: data.checkedBy }
             : item
         )
       );
@@ -80,6 +70,16 @@ const ItemsList = ({ sessionId, onSubtotalsChange }) => {
 
     const onSessionMembersChanged = (data) => {
       setSessionMembers(data.sessionMembers);
+      
+      if (data.memberLeft) {
+        setItems((items) =>
+          items.map((item) =>
+            item.checkedBy === data.memberLeft
+              ? { ...item, isChecked: false, checkedBy: null }
+              : item
+          )
+        );
+      }
     };
 
     socket.on("sessionMembersChanged", onSessionMembersChanged);
@@ -92,7 +92,7 @@ const ItemsList = ({ sessionId, onSubtotalsChange }) => {
           body: JSON.stringify({ sessionId }),
         });
 
-        if (!response.ok) {
+        if (response && !response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
@@ -136,7 +136,7 @@ const ItemsList = ({ sessionId, onSubtotalsChange }) => {
             alert("Someone else has already checked this item!");
           }
         } else {
-          socket.emit("setItemChecked", { sessionId, itemId });
+          socket.emit("setItemChecked", { sessionId, itemId, socketId });
           item.isChecked = true;
           item.isCheckedByMe = true;
 

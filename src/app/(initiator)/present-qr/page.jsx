@@ -78,7 +78,6 @@ const QrPage = () => {
     socket.on("sessionStarted", onSessionStarted);
 
     function onSessionMembersChanged(data) {
-      console.log(data);
       setSessionMembers(data.sessionMembers);
     }
 
