@@ -19,8 +19,8 @@ const AddHandles = () => {
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setInitiatorData({ ...initiatorData, [name]: value });
+    const { id, value } = e.target;
+    setInitiatorData({ ...initiatorData, [id]: value });
   };
 
   const handleSubmit = async (e) => {
@@ -62,7 +62,7 @@ const AddHandles = () => {
         <label htmlFor='cashTag'>Cash Tag</label>
         <input
           type='text'
-          name='cashTag'
+          id='cashTag'
           value={initiatorData.cashTag}
           onChange={handleChange}
           placeholder='Cash Tag'
@@ -71,7 +71,7 @@ const AddHandles = () => {
         <label htmlFor='venmoHandle'>Venmo Handle</label>
         <input
           type='text'
-          name='venmoHandle'
+          id='venmoHandle'
           value={initiatorData.venmoHandle}
           onChange={handleChange}
           placeholder='Venmo Handle'
@@ -79,7 +79,7 @@ const AddHandles = () => {
         <label htmlFor='humanName'>Human Name</label>
         <input
           type='text'
-          name='humanName'
+          id='humanName'
           value={initiatorData.humanName}
           onChange={handleChange}
           placeholder='Your human name'
