@@ -39,6 +39,15 @@ const CameraPreview = styled.video`
 `;
 
 const Camera = () => {
+  let server = {};
+  if (window.location.origin.includes('localhost')) {
+    server.socket = "wss://localhost:4858";
+    server.api = "https://localhost:4000";
+  } else {
+    server.socket = "wss://sharethepie.app:4858";
+    server.api = "https://api.sharethepie.app";
+  }
+
   const [imageData, setImageData] = useState("");
   const { isMobile } = useDetectDevice();
   const router = useRouter();
@@ -46,7 +55,7 @@ const Camera = () => {
 
   async function uploadDocument(imageData) {
     try {
-      const response = await fetch("https://api.sharethepie.app/parseReceiptImage", {
+      const response = await fetch(`${server.api}/parseReceiptImage`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

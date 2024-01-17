@@ -35,14 +35,16 @@ const Description = styled.span``;
 const Price = styled.span``;
 
 const ItemsList = ({ sessionId, onSubtotalsChange }) => {
-  let socket
-  
-  if(window.location.origin.includes('localhost')) {
-    socket = io("wss://localhost:4858");
+  let server = {};
+  if (window.location.origin.includes('localhost')) {
+    server.socket = "wss://localhost:4858";
+    server.api = "https://localhost:4000";
   } else {
-    socket = io("wss://sharethepie.app:4858");
+    server.socket = "wss://sharethepie.app:4858";
+    server.api = "https://api.sharethepie.app";
   }
 
+  const socket = io(server.socket);
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [sessionMembers, setSessionMembers] = useState([]);
   const [receiptData, setReceiptData] = useState();
@@ -84,7 +86,7 @@ const ItemsList = ({ sessionId, onSubtotalsChange }) => {
 
     const getReceiptData = async (sessionId) => {
       try {
-        const response = await fetch("https://api.sharethepie.app/getReceiptData", {
+        const response = await fetch(`${server.api}/getReceiptData`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ sessionId }),

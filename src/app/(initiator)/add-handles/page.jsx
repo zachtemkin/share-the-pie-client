@@ -6,6 +6,15 @@ import Button from "../../components/button";
 import { useAppContext } from "../../AppContext";
 
 const AddHandles = () => {
+  let server = {};
+  if (window.location.origin.includes('localhost')) {
+    server.socket = "wss://localhost:4858";
+    server.api = "https://localhost:4000";
+  } else {
+    server.socket = "wss://sharethepie.app:4858";
+    server.api = "https://api.sharethepie.app";
+  }
+
   const router = useRouter();
   const { appState, setAppState } = useAppContext();
 
@@ -25,7 +34,7 @@ const AddHandles = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("https://api.sharethepie.app/setInitiatorData", {
+      const response = await fetch(`${server.api}/setInitiatorData`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
