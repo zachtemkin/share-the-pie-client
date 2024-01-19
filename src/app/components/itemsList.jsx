@@ -46,7 +46,11 @@ const ItemsList = ({ sessionId, onSubtotalsChange }) => {
   const receiptData = appState.receiptData ? appState.receiptData : {};
 
   useEffect(() => {
-    setItems(appState.receiptData.items);
+    setItems(
+      appState.receiptData && appState.receiptData.items
+        ? appState.receiptData.items
+        : []
+    );
   }, [appState]);
 
   useEffect(() => {
