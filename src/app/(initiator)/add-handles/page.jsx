@@ -70,6 +70,16 @@ const AddHandles = () => {
   const router = useRouter();
   const { appState, setAppState } = useAppContext();
 
+  const cleanInitiatorData = (key, value) => {
+    let cleanedValue = value;
+
+    if (['cashTag', 'venmoHandle'].includes(key)) {
+      cleanedValue = cleanedValue.replace('@', '').replace('$', '');
+    }
+
+    return cleanedValue;
+  }
+
   const [initiatorData, setInitiatorData] = useState({
     sessionId: appState.sessionId,
     humanName: "",
@@ -85,12 +95,11 @@ const AddHandles = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setAppState((prevAppState) => ({
-      ...prevAppState,
-      cashTag: initiatorData.cashTag,
-      venmoHandle: initiatorData.venmoHandle,
-      humanName: initiatorData,
-    }));
+    let cleanedInitiatorData = {};
+
+    for (const initiatorDataKey in initiatorData) {
+      cleanedInitiatorData[initiatorDataKey] = cleanInitiatorData(initiatorDataKey, initiatorData[initiatorDataKey]);
+    }
 
     try {
       const response = await fetch(`${server.api}/setInitiatorData`, {
@@ -104,11 +113,9 @@ const AddHandles = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      console.log(data);
       advanceScreen();
     } catch (error) {
       console.error("Error submitting form:", error);
-      // Handle the error as needed
     }
   };
 

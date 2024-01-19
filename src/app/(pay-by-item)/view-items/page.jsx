@@ -75,8 +75,8 @@ const ViewItems = () => {
   useEffect(() => {
     setHandlesArray(
       [
-        { label: "Cash App", value: appState.receiptData.initiator.cashTag },
-        { label: "Venmo", value: appState.receiptData.initiator.venmoHandle },
+        { label: "Cash App", value: `$${appState.receiptData.initiator.cashTag}` },
+        { label: "Venmo", value: `@${appState.receiptData.initiator.venmoHandle}` },
       ].filter((handle) => handle.value !== "")
     );
     setButtonLabel(appState.cashTag ? appState.cashTag : "");
