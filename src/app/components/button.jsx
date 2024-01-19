@@ -5,25 +5,35 @@ import styled from "styled-components";
 const StyledButton = styled.button`
   background-color: #fff;
   color: #000;
-  font-size: 1em;
+  font-size: 1.125rem;
   font-weight: bold;
   border: none;
-  border-radius: 5em;
-  padding: 0.5em 1em;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+
   ${(props) =>
-    props.s &&
+    props.size === 'small' &&
     `
       font-weight: normal;
-      font-size: 0.9em;
-      padding: 0.25em 0.5em;
+      font-size: 0.9rem;
+      padding: 0.25rem 0.5rem;
     `};
 
   ${(props) =>
-    props.l &&
+    props.size === 'large' &&
     `
-      font-size: 1.25em;
-      padding: 1em 1.5em;
+      line-height: 2rem;
+      width: 100%;
+      font-size: 1.25rem;
+      padding: 0.75rem 1.5rem;
     `};
+
+    transition: 0.2s all;
+
+    &:active {
+      opacity: 0.75;
+      transform: scale(0.95);
+    }
 `;
 
 const Button = ({ children, ...rest }) => {
@@ -31,7 +41,7 @@ const Button = ({ children, ...rest }) => {
 };
 
 Button.propTypes = {
-  buttonSize: PropTypes.string,
+  size: PropTypes.string,
 };
 
 export default Button;
