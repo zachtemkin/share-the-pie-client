@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 import styled from "styled-components";
 import Button from "@/app/components/button";
@@ -28,6 +28,28 @@ const QrPage = () => {
   const router = useRouter();
 
   useEffect(() => {
+    const getReceiptData = async (sessionId) => {
+      try {
+        const response = await fetch(`${server.api}/getReceiptData`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionId }),
+        });
+
+        if (response && !response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        setAppState((prevAppState) => ({ ...prevAppState, receiptData: data }));
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    getReceiptData(appState.sessionId);
+
     async function getQrCode(sessionId) {
       try {
         const response = await fetch(`${server.api}/generateQrCode`, {
@@ -109,7 +131,10 @@ const QrPage = () => {
         Close Session
       </Button>
       {appState.sessionId && isConnected ? (
-        <ItemsList sessionId={appState.sessionId} onSubtotalsChange={handleSetMySubtotals} />
+        <ItemsList
+          sessionId={appState.sessionId}
+          onSubtotalsChange={handleSetMySubtotals}
+        />
       ) : (
         <p>nothing to see here</p>
       )}

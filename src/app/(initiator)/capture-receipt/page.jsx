@@ -41,7 +41,7 @@ const CameraPreview = styled.video`
 
 const Camera = () => {
   const server = useChooseServer();
-  const [imageData, setImageData] = useState("");
+  // const [imageData, setImageData] = useState("");
   const { isMobile } = useDetectDevice();
   const router = useRouter();
   const { appState, setAppState } = useAppContext();

@@ -1,10 +1,8 @@
 "use client";
 
 import io from "socket.io-client";
-import React, { useState, useContext, useCallback, useEffect } from "react";
-// import { useRouter, useSearchParams } from "next/navigation";
-// import Button from "./button";
-// import { useAppContext } from "../../AppContext";
+import React, { useState, useCallback, useEffect } from "react";
+import { useAppContext } from "../AppContext";
 import styled from "styled-components";
 import useChooseServer from "@/app/hooks/useChooseServer";
 
@@ -40,10 +38,16 @@ const ItemsList = ({ sessionId, onSubtotalsChange }) => {
   const socket = io(server.socket);
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [sessionMembers, setSessionMembers] = useState([]);
-  const [receiptData, setReceiptData] = useState();
-  const [items, setItems] = useState([]);
   const [myCheckedItems, setMyCheckedItems] = useState([]);
-  const [socketId, setSocketId] = useState('');
+  const [socketId, setSocketId] = useState("");
+  const { appState, setAppState } = useAppContext();
+  const [items, setItems] = useState([]);
+
+  const receiptData = appState.receiptData ? appState.receiptData : {};
+
+  useEffect(() => {
+    setItems(appState.receiptData.items);
+  }, [appState]);
 
   useEffect(() => {
     socket.on("connect", () => {
@@ -63,7 +67,7 @@ const ItemsList = ({ sessionId, onSubtotalsChange }) => {
 
     const onSessionMembersChanged = (data) => {
       setSessionMembers(data.sessionMembers);
-      
+
       if (data.memberLeft) {
         setItems((items) =>
           items.map((item) =>
@@ -76,30 +80,6 @@ const ItemsList = ({ sessionId, onSubtotalsChange }) => {
     };
 
     socket.on("sessionMembersChanged", onSessionMembersChanged);
-
-    const getReceiptData = async (sessionId) => {
-      try {
-        const response = await fetch(`${server.api}/getReceiptData`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId }),
-        });
-
-        if (response && !response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        setReceiptData(data);
-
-        setItems(data.items);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-
-    getReceiptData(sessionId);
 
     socket.emit("newConnection", { sessionId });
 

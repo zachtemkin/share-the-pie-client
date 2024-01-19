@@ -26,6 +26,13 @@ const AddHandles = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setAppState((prevAppState) => ({
+      ...prevAppState,
+      cashTag: initiatorData.cashTag,
+      venmoHandle: initiatorData.venmoHandle,
+      humanName: initiatorData,
+    }));
+
     try {
       const response = await fetch(`${server.api}/setInitiatorData`, {
         method: "POST",
