@@ -125,6 +125,7 @@ const Camera = () => {
   const takePicture = async () => {
     const video = videoRef.current;
     video.pause();
+    video.srcObject.getTracks()[0].stop();
 
     setIsUploading(true);
 
@@ -158,7 +159,7 @@ const Camera = () => {
         muted={true}
         playsInline={true}
       />
-      <CaptureButton onClick={takePicture} isUploading={isUploading}>{!isUploading ? 'Scan' : 'Processing...'}</CaptureButton>
+      <CaptureButton onClick={takePicture} $isUploading={isUploading}>{!isUploading ? 'Scan' : 'Processing...'}</CaptureButton>
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
     </Container >
   );
