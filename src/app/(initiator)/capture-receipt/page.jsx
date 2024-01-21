@@ -19,12 +19,41 @@ const Container = styled.div`
 const CaptureButton = styled.button`
   z-index: 2;
   background-color: #ffffff;
-  width: 5rem;
-  height: 5rem;
+  width: 50vw;
+  height: 3.5rem;
   border: none;
-  border-radius: 5rem;
+  border-radius: 0.75rem;
   position: fixed;
-  bottom: 3rem;
+  bottom: 2rem;
+  transition: all 0.2s;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 3px 20px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.3);
+  font-size: 1.125rem;
+  color: rgba(0, 0, 0, 1);
+  font-weight: 600;
+  line-height: 1.25rem;
+
+  &:active {
+    transform: scale(0.9);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(0, 0, 0, 0.3);
+  }
+
+  @keyframes width-grow {
+    0% {
+      width: 50vw;
+      background: rgba(255, 255, 255, 1);
+    }
+    100% {
+      width: 85vw;
+      background: rgba(255, 255, 255, 0.25);
+    }
+  }
+
+  ${({ isUploading }) =>
+    isUploading &&
+    `
+    mix-blend-mode: overlay;
+    animation: width-grow 2s ease-in-out infinite alternate;
+  `}
 `;
 
 const CameraPreview = styled.video`
@@ -41,10 +70,10 @@ const CameraPreview = styled.video`
 
 const Camera = () => {
   const server = useChooseServer();
-  // const [imageData, setImageData] = useState("");
   const { isMobile } = useDetectDevice();
   const router = useRouter();
   const { appState, setAppState } = useAppContext();
+  const [isUploading, setIsUploading] = useState(false);
 
   async function uploadDocument(imageData) {
     try {
@@ -74,10 +103,10 @@ const Camera = () => {
   const getVideo = () => {
     const videoObj = isMobile
       ? {
-          facingMode: { exact: "environment" },
-          width: { ideal: 3264 / 2 },
-          height: { ideal: 2448 / 2 },
-        }
+        facingMode: { exact: "environment" },
+        width: { ideal: 3264 / 2 },
+        height: { ideal: 2448 / 2 },
+      }
       : true;
 
     navigator.mediaDevices
@@ -94,25 +123,26 @@ const Camera = () => {
   };
 
   const takePicture = async () => {
-    const width = 3264 / 2;
-    const height = 2448 / 2;
-    let video = videoRef.current;
-    let canvas = canvasRef.current;
+    const video = videoRef.current;
+    video.pause();
 
-    canvas.width = width;
-    canvas.height = height;
+    setIsUploading(true);
 
-    let ctx = canvas.getContext("2d");
-    ctx.drawImage(video, 0, 0, width, height);
+    setTimeout(async () => {
+      const width = 3264 / 2;
+      const height = 2448 / 2;
+      const canvas = canvasRef.current;
+      canvas.width = width;
+      canvas.height = height;
 
-    let imageData = canvas.toDataURL("image/png");
+      const context = canvas.getContext("2d");
+      context.drawImage(video, 0, 0, width, height);
+      const imageData = canvas.toDataURL("image/png");
 
-    console.log("im taking a picture");
-
-    let data = await uploadDocument(imageData);
-    console.log(data.sessionId);
-    setAppState({ sessionId: data.sessionId });
-    router.push("/add-handles");
+      let data = await uploadDocument(imageData);
+      setAppState({ sessionId: data.sessionId });
+      router.push("/add-handles");
+    }, 200)
   };
 
   useEffect(() => {
@@ -128,9 +158,9 @@ const Camera = () => {
         muted={true}
         playsInline={true}
       />
-      <CaptureButton onClick={takePicture} />
+      <CaptureButton onClick={takePicture} isUploading={isUploading}>{!isUploading ? 'Scan' : 'Processing...'}</CaptureButton>
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
-    </Container>
+    </Container >
   );
 };
 
