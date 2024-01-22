@@ -150,7 +150,7 @@ const Camera = () => {
   useEffect(() => {
     appState.sessionId && router.push("/present-qr");
     getVideo();
-  }, [appState.sessionId, getVideo, router]);
+  }, [getVideo, router]);
 
   return (
     <Container>
