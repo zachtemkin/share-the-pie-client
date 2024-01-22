@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import useDetectDevice from "@/app/hooks/useDetectDevice";
 import useChooseServer from "@/app/hooks/useChooseServer";
@@ -71,7 +71,7 @@ const Camera = () => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
-  const getVideo = () => {
+  const getVideo = useCallback(() => {
     const videoObj = isMobile
       ? {
           facingMode: { exact: "environment" },
@@ -91,7 +91,7 @@ const Camera = () => {
       .catch((err) => {
         console.error("error:", err);
       });
-  };
+  }, [isMobile]);
 
   const takePicture = async () => {
     const width = 3264 / 2;
@@ -118,7 +118,7 @@ const Camera = () => {
   useEffect(() => {
     appState.sessionId && router.push("/present-qr");
     getVideo();
-  }, []);
+  }, [appState.sessionId, getVideo, router]);
 
   return (
     <Container>
