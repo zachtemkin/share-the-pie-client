@@ -86,7 +86,7 @@ const ViewItems = () => {
     let url;
     switch (handle.label) {
       case 'Cash App':
-        url = `https://cash.app/${handle.prefix}${handle.value}/${myTotal}`
+        url = `https://cash.app/${handle.prefix}${handle.value}/${myTotal.replace('$', '')}`
         break;
       case 'Venmo':
         url = `https://venmo.com/${handle.value}?txn=pay&note=Share the Pie!&amount=${myTotal}`
