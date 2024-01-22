@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import useDetectDevice from "@/app/hooks/useDetectDevice";
 import useChooseServer from "@/app/hooks/useChooseServer";
@@ -26,7 +26,8 @@ const CaptureButton = styled.button`
   position: fixed;
   bottom: 2rem;
   transition: all 0.2s;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 3px 20px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2),
+    0 3px 20px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.3);
   font-size: 1.125rem;
   color: rgba(0, 0, 0, 1);
   font-weight: 600;
@@ -103,10 +104,10 @@ const Camera = () => {
   const getVideo = useCallback(() => {
     const videoObj = isMobile
       ? {
-        facingMode: { exact: "environment" },
-        width: { ideal: 3264 / 2 },
-        height: { ideal: 2448 / 2 },
-      }
+          facingMode: { exact: "environment" },
+          width: { ideal: 3264 / 2 },
+          height: { ideal: 2448 / 2 },
+        }
       : true;
 
     navigator.mediaDevices
@@ -143,7 +144,7 @@ const Camera = () => {
       let data = await uploadDocument(imageData);
       setAppState({ sessionId: data.sessionId });
       router.push("/add-handles");
-    }, 200)
+    }, 200);
   };
 
   useEffect(() => {
@@ -159,9 +160,11 @@ const Camera = () => {
         muted={true}
         playsInline={true}
       />
-      <CaptureButton onClick={takePicture} $isUploading={isUploading}>{!isUploading ? 'Scan' : 'Processing...'}</CaptureButton>
+      <CaptureButton onClick={takePicture} $isUploading={isUploading}>
+        {!isUploading ? "Scan" : "Processing..."}
+      </CaptureButton>
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
-    </Container >
+    </Container>
   );
 };
 
