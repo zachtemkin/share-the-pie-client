@@ -82,6 +82,22 @@ const ViewItems = () => {
     }
   }, [appState]);
 
+  const handlePaymentButtonClick = (handle) => {
+    let url;
+    switch (handle.label) {
+      case 'Cash App':
+        url = `https://cash.app/${handle.prefix}${handle.value}/${myTotal}`
+        break;
+      case 'Venmo':
+        url = `https://venmo.com/${handle.value}?txn=pay&note=Share the Pie!&amount=${myTotal}`
+        break;
+      default:
+        url = ''
+    }
+
+    window.location.href = url;
+  }
+
   return (
     <>
       {sessionId && (
@@ -106,7 +122,7 @@ const ViewItems = () => {
               })}
           </Subtotals>
           {handlesArray.map((handle, key) => (
-            <Button key={key}>
+            <Button key={key} onClick={() => handlePaymentButtonClick(handle)}>
               Pay {myTotal} to {handle.prefix}{handle.value} on {handle.label}
             </Button>
           ))}

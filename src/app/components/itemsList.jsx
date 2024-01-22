@@ -173,9 +173,8 @@ const ItemsList = ({ sessionId, onSubtotalsChange }) => {
           items.map((item, index) => (
             <Item
               key={item.id}
-              className={`${item.isChecked && "isChecked"} ${
-                item.isChecked && !item.isCheckedByMe && "isNotCheckedByMe"
-              }`}
+              className={`${item.isChecked && "isChecked"} ${item.isChecked && !item.isCheckedByMe && "isNotCheckedByMe"
+                }`}
               onClick={() => handleItemClick(item.id)}>
               <Description>{item.description}</Description>
               <Price>{item.price}</Price>
