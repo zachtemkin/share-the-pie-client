@@ -107,7 +107,7 @@ const AddHandles = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(initiatorData),
+        body: JSON.stringify(cleanedInitiatorData),
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

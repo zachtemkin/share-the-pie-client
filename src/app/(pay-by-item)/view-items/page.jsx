@@ -75,8 +75,8 @@ const ViewItems = () => {
     if (appState.receiptData && appState.receiptData.initiator) {
       setHandlesArray(
         [
-          { label: "Cash App", value: `$${appState.receiptData.initiator.cashTag}` },
-          { label: "Venmo", value: `@${appState.receiptData.initiator.venmoHandle}` },
+          { label: "Cash App", prefix: '$', value: appState.receiptData.initiator.cashTag },
+          { label: "Venmo", prefix: '@', value: appState.receiptData.initiator.venmoHandle },
         ].filter((handle) => handle.value !== "")
       );
     }
@@ -107,7 +107,7 @@ const ViewItems = () => {
           </Subtotals>
           {handlesArray.map((handle, key) => (
             <Button key={key}>
-              Pay {myTotal} to {handle.value} on {handle.label}
+              Pay {myTotal} to {handle.prefix}{handle.value} on {handle.label}
             </Button>
           ))}
         </>
