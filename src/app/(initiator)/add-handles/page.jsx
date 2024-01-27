@@ -135,7 +135,7 @@ const AddHandles = () => {
   return (
     <Page>
       <Header>Who are you?</Header>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} autocomplete='off'>
         <Stack>
           <FormField
             type='text'
@@ -143,6 +143,8 @@ const AddHandles = () => {
             value={initiatorData.venmoHandle}
             onChange={handleChange}
             placeholder='Venmo'
+            spellcheck='off'
+            autofocus='true'
           />
           <FormField
             type='text'
@@ -150,6 +152,7 @@ const AddHandles = () => {
             value={initiatorData.cashTag}
             onChange={handleChange}
             placeholder='Cash App'
+            spellcheck='off'
           />
           <input
             type='hidden'
