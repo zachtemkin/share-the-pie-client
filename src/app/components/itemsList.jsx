@@ -33,12 +33,11 @@ const Description = styled.span``;
 
 const Price = styled.span``;
 
-const ItemsList = ({ sessionId, onSubtotalsChange }) => {
+const ItemsList = ({ sessionId, onSubtotalsChange, onMyCheckedItemsChange, myCheckedItems }) => {
   const server = useChooseServer();
   const socket = io(server.socket);
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [sessionMembers, setSessionMembers] = useState([]);
-  const [myCheckedItems, setMyCheckedItems] = useState([]);
   const [socketId, setSocketId] = useState("");
   const { appState, setAppState } = useAppContext();
   const [items, setItems] = useState([]);
@@ -105,7 +104,7 @@ const ItemsList = ({ sessionId, onSubtotalsChange }) => {
             item.isChecked = false;
             item.isCheckedByMe = false;
 
-            setMyCheckedItems(
+            onMyCheckedItemsChange(
               myCheckedItems.filter(
                 (myCheckedItem) => myCheckedItem.id !== itemId
               )
@@ -118,7 +117,7 @@ const ItemsList = ({ sessionId, onSubtotalsChange }) => {
           item.isChecked = true;
           item.isCheckedByMe = true;
 
-          setMyCheckedItems((myCheckedItems) => [...myCheckedItems, item]);
+          onMyCheckedItemsChange((myCheckedItems) => [...myCheckedItems, item]);
         }
         return item;
       } else {
@@ -158,7 +157,9 @@ const ItemsList = ({ sessionId, onSubtotalsChange }) => {
   );
 
   useEffect(() => {
-    calculateSubtotals(myCheckedItems);
+    if (myCheckedItems) {
+      calculateSubtotals(myCheckedItems);
+    }
   }, [myCheckedItems, calculateSubtotals]);
 
   return (

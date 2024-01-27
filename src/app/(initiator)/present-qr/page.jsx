@@ -113,6 +113,12 @@ const QrPage = () => {
     setMySubtotals(newMySubtotals);
   };
 
+  const [myCheckedItems, setMyCheckedItems] = useState([]);
+
+  const handleSetMyCheckedItems = (newMyCheckedItems) => {
+    setMyCheckedItems(newMyCheckedItems);
+  };
+
   return (
     <Page>
       <QRCode src={qrCode} draggable={false} />
@@ -126,6 +132,8 @@ const QrPage = () => {
         <ItemsList
           sessionId={appState.sessionId}
           onSubtotalsChange={handleSetMySubtotals}
+          onMyCheckedItemsChange={handleSetMyCheckedItems}
+          myCheckedItems={myCheckedItems}
         />
       ) : (
         <p>nothing to see here</p>

@@ -15,11 +15,6 @@ const Row = styled.li``;
 const ViewItems = () => {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("sessionId");
-  const [mySubTotals, setMySubtotals] = useState({
-    myItems: 0,
-    myTip: 0,
-    myTax: 0,
-  });
 
   const { appState, setAppState } = useAppContext();
 
@@ -50,11 +45,23 @@ const ViewItems = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [myTotal, setMyTotal] = useState(0);
+  const [mySubTotals, setMySubtotals] = useState({
+    myItems: 0,
+    myTip: 0,
+    myTax: 0,
+  });
 
   const handleSetMySubtotals = (newMySubtotals) => {
     setMySubtotals(newMySubtotals);
   };
+
+  const [myCheckedItems, setMyCheckedItems] = useState([]);
+
+  const handleSetMyCheckedItems = (newMyCheckedItems) => {
+    setMyCheckedItems(newMyCheckedItems);
+  };
+
+  const [myTotal, setMyTotal] = useState(0);
 
   useEffect(() => {
     const myTotalValue = Object.values(mySubTotals).reduce(
@@ -83,14 +90,25 @@ const ViewItems = () => {
     }
   }, [appState]);
 
-  const handlePaymentButtonClick = (handle) => {
+  const handlePaymentButtonClick = (handle, myCheckedItems) => {
+    const items = myCheckedItems.map((item) => {
+      return item.description.replace('\n', '').replace('\r', '')
+    }).join(', ');
+
+    let note;
+    if (appState.receiptData.merchant.name) {
+      note = `${appState.receiptData.merchant.name}: ${items}`;
+    } else {
+      note = items;
+    }
+
     let url;
     switch (handle.label) {
       case 'Cash App':
-        url = `https://cash.app/${handle.prefix}${handle.value}/${myTotal.replace('$', '')}`
+        url = `https://cash.app/${handle.prefix}${handle.value}/${encodeURIComponent(myTotal.replace('$', ''))}`
         break;
       case 'Venmo':
-        url = `https://venmo.com/${handle.value}?txn=pay&note=Share the Pie!&amount=${myTotal}`
+        url = `https://venmo.com/${handle.value}?txn=pay&note=${encodeURIComponent(note)}&amount=${encodeURIComponent(myTotal)} `
         break;
       default:
         url = ''
@@ -105,7 +123,10 @@ const ViewItems = () => {
         <>
           <ItemsList
             sessionId={sessionId}
-            onSubtotalsChange={handleSetMySubtotals}></ItemsList>
+            onSubtotalsChange={handleSetMySubtotals}
+            onMyCheckedItemsChange={handleSetMyCheckedItems}
+            myCheckedItems={myCheckedItems}
+          />
           <Subtotals>
             {mySubTotals &&
               Object.keys(mySubTotals).map((subTotalKey, index) => {
@@ -123,7 +144,7 @@ const ViewItems = () => {
               })}
           </Subtotals>
           {handlesArray.map((handle, key) => (
-            <Button key={key} onClick={() => handlePaymentButtonClick(handle)}>
+            <Button key={key} onClick={() => handlePaymentButtonClick(handle, myCheckedItems)}>
               Pay {myTotal} to {handle.prefix}{handle.value} on {handle.label}
             </Button>
           ))}
