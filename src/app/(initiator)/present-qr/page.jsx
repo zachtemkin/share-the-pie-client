@@ -75,22 +75,13 @@ const QrPage = () => {
 
     getQrCode(appState.sessionId);
 
-    console.log("QR page:", appState.sessionId);
-
     function onConnect() {
       setIsConnected(true);
-      console.log(`connected: ${isConnected}`);
     }
 
     socket.on("connect", onConnect);
     socket.emit("startSession", { sessionId: appState.sessionId });
     socket.emit("raiseHand", socket.id);
-
-    function onSessionStarted(data) {
-      console.log(data);
-    }
-
-    socket.on("sessionStarted", onSessionStarted);
 
     function onSessionMembersChanged(data) {
       setSessionMembers(data.sessionMembers);
@@ -100,7 +91,6 @@ const QrPage = () => {
 
     return () => {
       socket.off("connect", onConnect);
-      socket.off("sessionStarted", onSessionStarted);
       socket.off("sessionMembersChanged", onSessionMembersChanged);
     };
   }, []);

@@ -130,14 +130,10 @@ const AddHandles = () => {
     router.push("/present-qr");
   };
 
-  useEffect(() => {
-    console.log(appState);
-  }, []);
-
   return (
     <Page>
       <Header>Who are you?</Header>
-      <form onSubmit={handleSubmit} autocomplete='off'>
+      <form onSubmit={handleSubmit} autoComplete='off'>
         <Stack>
           <FormField
             type='text'
@@ -145,8 +141,8 @@ const AddHandles = () => {
             value={initiatorData.venmoHandle}
             onChange={handleChange}
             placeholder='Venmo'
-            spellcheck='off'
-            autofocus='true'
+            spellCheck='off'
+            autoFocus='true'
           />
           <FormField
             type='text'
@@ -154,7 +150,7 @@ const AddHandles = () => {
             value={initiatorData.cashTag}
             onChange={handleChange}
             placeholder='Cash App'
-            spellcheck='off'
+            spellCheck='off'
           />
           <input
             type='hidden'
