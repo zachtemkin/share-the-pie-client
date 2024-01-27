@@ -80,11 +80,15 @@ const AddHandles = () => {
     return cleanedValue;
   }
 
+  const initialInitatorData =
+    (typeof window !== "undefined" &&
+      JSON.parse(localStorage.getItem("initiatorData"))) ||
+    {};
+
   const [initiatorData, setInitiatorData] = useState({
     sessionId: appState.sessionId,
-    humanName: "",
-    cashTag: "",
-    venmoHandle: "",
+    cashTag: initialInitatorData && initialInitatorData.cashTag ? initialInitatorData.cashTag : "",
+    venmoHandle: initialInitatorData && initialInitatorData.venmoHandle ? initialInitatorData.venmoHandle : ""
   });
 
   const handleChange = (e) => {
@@ -101,6 +105,8 @@ const AddHandles = () => {
       cleanedInitiatorData[initiatorDataKey] = cleanInitiatorData(initiatorDataKey, initiatorData[initiatorDataKey]);
     }
 
+    localStorage.setItem("initiatorData", JSON.stringify({ cashTag: cleanedInitiatorData.cashTag, venmoHandle: cleanedInitiatorData.venmoHandle }));
+
     try {
       const response = await fetch(`${server.api}/setInitiatorData`, {
         method: "POST",
@@ -112,7 +118,6 @@ const AddHandles = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data = await response.json();
       advanceScreen();
     } catch (error) {
       console.error("Error submitting form:", error);
