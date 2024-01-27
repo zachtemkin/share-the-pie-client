@@ -92,10 +92,10 @@ const ViewItems = () => {
 
   const handlePaymentButtonClick = (handle, myCheckedItems) => {
     const items = myCheckedItems.map((item) => {
-      return item.description.replace('\n', '').replace('\r', '')
+      return item.description;
     }).join(', ');
 
-    let note;
+    let note = '';
     if (appState.receiptData.merchant.name) {
       note = `${appState.receiptData.merchant.name}: ${items}`;
     } else {
@@ -108,7 +108,7 @@ const ViewItems = () => {
         url = `https://cash.app/${handle.prefix}${handle.value}/${encodeURIComponent(myTotal.replace('$', ''))}`
         break;
       case 'Venmo':
-        url = `https://venmo.com/${handle.value}?txn=pay&note=${encodeURIComponent(note)}&amount=${encodeURIComponent(myTotal)} `
+        url = `https://venmo.com/${handle.value}?txn=pay&note=${encodeURIComponent(note).replaceAll('%20', '%C2%A0')}&amount=${encodeURIComponent(myTotal)} `
         break;
       default:
         url = ''
