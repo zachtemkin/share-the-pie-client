@@ -93,12 +93,14 @@ const QrPage = () => {
       socket.off("connect", onConnect);
       socket.off("sessionMembersChanged", onSessionMembersChanged);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (appState.sessionId == null) {
       router.push("/capture-receipt");
     }
+
   }, [appState.sessionId, router]);
 
   const [mySubTotals, setMySubtotals] = useState({

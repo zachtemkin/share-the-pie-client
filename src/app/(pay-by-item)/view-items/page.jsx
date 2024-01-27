@@ -47,6 +47,7 @@ const ViewItems = () => {
     };
 
     getReceiptData(sessionId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [myTotal, setMyTotal] = useState(0);

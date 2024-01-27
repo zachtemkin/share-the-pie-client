@@ -93,6 +93,7 @@ const ItemsList = ({ sessionId, onSubtotalsChange }) => {
       socket.off("sessionMembersChanged");
       socket.off("disconnect");
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleItemClick = (itemId) => {
@@ -152,6 +153,7 @@ const ItemsList = ({ sessionId, onSubtotalsChange }) => {
         onSubtotalsChange({ myItems, myTip, myTax });
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [receiptData]
   );
 
