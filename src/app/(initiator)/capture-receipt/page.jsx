@@ -104,10 +104,10 @@ const Camera = () => {
   const getVideo = useCallback(() => {
     const videoObj = isMobile
       ? {
-          facingMode: { exact: "environment" },
-          width: { ideal: 3264 / 2 },
-          height: { ideal: 2448 / 2 },
-        }
+        facingMode: { exact: "environment" },
+        width: { ideal: 3264 / 2 },
+        height: { ideal: 2448 / 2 },
+      }
       : true;
 
     navigator.mediaDevices
@@ -148,8 +148,12 @@ const Camera = () => {
   };
 
   useEffect(() => {
-    appState.sessionId && router.push("/present-qr");
-    getVideo();
+    const hasSessionId =
+      (typeof window !== "undefined" &&
+        JSON.parse(localStorage.getItem("appState")).sessionId) ||
+      false;
+
+    hasSessionId ? router.push("/present-qr") : getVideo();
   }, [getVideo, router]);
 
   return (
