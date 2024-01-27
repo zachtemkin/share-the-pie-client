@@ -92,7 +92,7 @@ const ViewItems = () => {
 
   const handlePaymentButtonClick = (handle, myCheckedItems) => {
     const items = myCheckedItems.map((item) => {
-      return item.description;
+      return item.description.replaceAll('\r', ' ').replaceAll('\n', ' ');
     }).join(', ');
 
     let note = '';
