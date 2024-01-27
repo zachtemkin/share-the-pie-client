@@ -49,7 +49,9 @@ const FormField = styled.input`
   }
 
   &:focus {
-    animation: blink_input_opacity_to_prevent_scrolling_when_focus 0.01s;
+    @media only screen and (hover: none) {
+        animation: blink_input_opacity_to_prevent_scrolling_when_focus 0.01s;
+    }
   }
 
   &::placeholder {
