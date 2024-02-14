@@ -5,35 +5,41 @@ import React, { useState, useCallback, useEffect } from "react";
 import { useAppContext } from "../AppContext";
 import styled from "styled-components";
 import useChooseServer from "@/app/hooks/useChooseServer";
+import Item from "@/app/components/item";
 
 const Items = styled.ul`
   width: 100%;
   list-style-type: none;
 `;
 
-const Item = styled.li`
-  width: calc(100% - 2rem);
-  margin: 1rem;
-  padding: 1rem;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.1);
+// const Item = styled.li`
+//   width: calc(100% - 2rem);
+//   margin: 1rem;
+//   padding: 1rem;
+//   border-radius: 12px;
+//   background: rgba(255, 255, 255, 0.1);
 
-  &.isChecked {
-    color: rgba(0, 0, 0, 1);
-    background: rgba(255, 255, 255, 1);
-  }
+//   &.isChecked {
+//     color: rgba(0, 0, 0, 1);
+//     background: rgba(255, 255, 255, 1);
+//   }
 
-  &.isNotCheckedByMe {
-    color: rgba(0, 0, 0, 1);
-    background: rgba(255, 255, 255, 0.05);
-  }
-`;
+//   &.isNotCheckedByMe {
+//     color: rgba(0, 0, 0, 1);
+//     background: rgba(255, 255, 255, 0.05);
+//   }
+// `;
 
 const Description = styled.span``;
 
 const Price = styled.span``;
 
-const ItemsList = ({ sessionId, onSubtotalsChange, onMyCheckedItemsChange, myCheckedItems }) => {
+const ItemsList = ({
+  sessionId,
+  onSubtotalsChange,
+  onMyCheckedItemsChange,
+  myCheckedItems,
+}) => {
   const server = useChooseServer();
   const socket = io(server.socket);
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -176,13 +182,10 @@ const ItemsList = ({ sessionId, onSubtotalsChange, onMyCheckedItemsChange, myChe
           items.map((item, index) => (
             <Item
               key={item.id}
-              className={`${item.isChecked && "isChecked"} ${item.isChecked && !item.isCheckedByMe && "isNotCheckedByMe"
-                }`}
-              onClick={() => handleItemClick(item.id)}>
-              <Description>{item.description}</Description>
-              <Price>{item.price}</Price>
-              <div>Me? {item.isCheckedByMe ? "yes" : "no"}</div>
-            </Item>
+              item={item}
+              handleClick={() => {
+                handleItemClick(item.id);
+              }}></Item>
           ))}
       </Items>
     </>
