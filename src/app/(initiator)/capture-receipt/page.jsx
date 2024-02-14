@@ -104,10 +104,10 @@ const Camera = () => {
   const getVideo = useCallback(() => {
     const videoObj = isMobile
       ? {
-        facingMode: { exact: "environment" },
-        width: { ideal: 3264 / 2 },
-        height: { ideal: 2448 / 2 },
-      }
+          facingMode: { exact: "environment" },
+          width: { ideal: 3264 / 2 },
+          height: { ideal: 2448 / 2 },
+        }
       : true;
 
     navigator.mediaDevices
@@ -126,7 +126,6 @@ const Camera = () => {
   const takePicture = async () => {
     const video = videoRef.current;
     video.pause();
-    video.srcObject.getTracks()[0].stop();
 
     setIsUploading(true);
 
@@ -142,6 +141,7 @@ const Camera = () => {
       const imageData = canvas.toDataURL("image/png");
 
       let data = await uploadDocument(imageData);
+      video.srcObject.getTracks()[0].stop();
       setAppState({ sessionId: data.sessionId });
       router.push("/add-handles");
     }, 200);
