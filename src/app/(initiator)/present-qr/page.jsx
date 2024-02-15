@@ -8,14 +8,19 @@ import ItemsList from "@/app/components/itemsList";
 import { useRouter } from "next/navigation";
 import { useAppContext } from "../../AppContext";
 import useChooseServer from "@/app/hooks/useChooseServer";
+import Card from "@/app/components/card";
+import SessionMembersIndicator from "@/app/components/sessionMembersIndicator";
 
 const Page = styled.div`
   text-align: center;
 `;
 
 const QRCode = styled.img`
-  filter: invert(1);
   width: 400px;
+`;
+
+const QRWrapper = styled(Card)`
+  background-color: red;
 `;
 
 const QrPage = () => {
@@ -100,7 +105,6 @@ const QrPage = () => {
     if (appState.sessionId == null) {
       router.push("/capture-receipt");
     }
-
   }, [appState.sessionId, router]);
 
   const [mySubTotals, setMySubtotals] = useState({
@@ -121,10 +125,14 @@ const QrPage = () => {
 
   return (
     <Page>
-      <QRCode src={qrCode} draggable={false} />
-      {sessionMembers.map(
-        (member, index) => !member.isSessionCreator && <div key={index}>•</div>
-      )}
+      <QRWrapper>
+        <QRCode src={qrCode} draggable={false} />
+        <SessionMembersIndicator
+          isConnected={isConnected}
+          sessionMembers={sessionMembers}
+        />
+      </QRWrapper>
+
       <Button onClick={() => setAppState({ sessionId: null })}>
         Close Session
       </Button>
@@ -136,7 +144,7 @@ const QrPage = () => {
           myCheckedItems={myCheckedItems}
         />
       ) : (
-        <p>nothing to see here</p>
+        <p>Connecting...</p>
       )}
     </Page>
   );

@@ -1,19 +1,30 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
-const Description = styled.p``;
+const Description = styled.p`
+  font-weight: 580;
+  margin-right: auto;
+`;
 const Price = styled.p``;
 
 const ItemWrapper = styled.li`
+  display: flex;
+  flex-flow: row nowrap;
+  font-size: 18px;
+  align-items: center;
+  line-height: 122%;
+  justify-content: space-between;
+  gap: 1rem;
   width: calc(100% - 2rem);
-  margin: 1rem;
-  padding: 1rem;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.1);
+  margin-bottom: 0.75rem;
+  width: 100%;
+  padding: ${(props) => props.theme.surfacePadding};
+  border-radius: ${(props) => props.theme.surfaceBorderRadius};
+  background-color: ${(props) => props.theme.darkSurfaceColor};
 
   &.isChecked {
     color: rgba(0, 0, 0, 1);
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 1);
   }
 
   &.isNotCheckedByMe {
@@ -31,12 +42,12 @@ const CheckBoxUnchecked = () => {
       fill='none'
       xmlns='http://www.w3.org/2000/svg'>
       <rect
-        x='1.89948'
+        x='1'
         y='1'
         width='22'
         height='22'
         rx='5'
-        stroke='white'
+        stroke='rgba(255,255,255,0.4)'
         strokeWidth='2'
       />
     </svg>
@@ -46,15 +57,19 @@ const CheckBoxUnchecked = () => {
 const CheckBoxChecked = () => {
   return (
     <svg
-      width='25'
+      width='24'
       height='24'
-      viewBox='0 0 25 24'
+      viewBox='0 0 24 24'
       fill='none'
       xmlns='http://www.w3.org/2000/svg'>
       <path
-        fillRule='evenodd'
-        clipRule='evenodd'
-        d='M0.899475 6C0.899475 2.68629 3.58577 0 6.89948 0H18.8995C22.2132 0 24.8995 2.68629 24.8995 6V18C24.8995 21.3137 22.2132 24 18.8995 24H6.89948C3.58577 24 0.899475 21.3137 0.899475 18V6ZM5.76172 13.5107C5.14247 12.8914 5.14247 11.8874 5.76172 11.2682C6.38098 10.6489 7.38499 10.6489 8.00425 11.2682L10.9366 14.2006L17.9793 7.15788C18.5986 6.53863 19.6026 6.53863 20.2219 7.15788C20.8411 7.77714 20.8411 8.78115 20.2219 9.40041L12.0591 17.5632C11.4896 18.1327 10.5947 18.1784 9.97296 17.7005C9.9151 17.6568 9.85956 17.6085 9.80682 17.5558L5.76172 13.5107Z'
+        d='M0 6C0 2.68629 2.68629 0 6 0H18C21.3137 0 24 2.68629 24 6V18C24 21.3137 21.3137 24 18 24H6C2.68629 24 0 21.3137 0 18V6Z'
+        fill='black'
+      />
+      <path
+        fill-rule='evenodd'
+        clip-rule='evenodd'
+        d='M19.3224 7.1578C18.7031 6.53855 17.6991 6.53855 17.0799 7.1578L10.0371 14.2006L7.10479 11.2683C6.48554 10.649 5.48152 10.649 4.86227 11.2683C4.24301 11.8876 4.24301 12.8916 4.86227 13.5108L8.90736 17.5559C8.96581 17.6144 9.02768 17.6673 9.09233 17.7147C9.71324 18.1774 10.5959 18.1269 11.1596 17.5631L19.3224 9.40033C19.9416 8.78107 19.9416 7.77706 19.3224 7.1578Z'
         fill='white'
       />
     </svg>
@@ -62,6 +77,11 @@ const CheckBoxChecked = () => {
 };
 
 const Item = ({ item, handleClick }) => {
+  const priceUSD = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(item.price);
+
   return (
     <ItemWrapper
       onClick={handleClick}
@@ -71,7 +91,7 @@ const Item = ({ item, handleClick }) => {
       {item.isChecked ? <CheckBoxChecked /> : <CheckBoxUnchecked />}
 
       <Description>{item.description}</Description>
-      <Price>{item.price}</Price>
+      <Price>{priceUSD}</Price>
     </ItemWrapper>
   );
 };

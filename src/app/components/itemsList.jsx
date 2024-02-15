@@ -12,24 +12,6 @@ const Items = styled.ul`
   list-style-type: none;
 `;
 
-// const Item = styled.li`
-//   width: calc(100% - 2rem);
-//   margin: 1rem;
-//   padding: 1rem;
-//   border-radius: 12px;
-//   background: rgba(255, 255, 255, 0.1);
-
-//   &.isChecked {
-//     color: rgba(0, 0, 0, 1);
-//     background: rgba(255, 255, 255, 1);
-//   }
-
-//   &.isNotCheckedByMe {
-//     color: rgba(0, 0, 0, 1);
-//     background: rgba(255, 255, 255, 0.05);
-//   }
-// `;
-
 const Description = styled.span``;
 
 const Price = styled.span``;
@@ -170,13 +152,6 @@ const ItemsList = ({
 
   return (
     <>
-      <p>Socket: {isConnected ? "Connected" : "Disconnected"}</p>
-      <div>
-        {sessionMembers.map(
-          (member, index) =>
-            !member.isSessionCreator && <span key={index}>•</span>
-        )}
-      </div>
       <Items>
         {items &&
           items.map((item, index) => (
