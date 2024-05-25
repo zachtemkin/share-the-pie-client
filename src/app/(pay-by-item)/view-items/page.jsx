@@ -4,6 +4,7 @@ import useChooseServer from "@/app/hooks/useChooseServer";
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAppContext } from "../../AppContext";
+import { Suspense } from "react";
 import styled from "styled-components";
 import Button from "../../components/button";
 import ItemsList from "../../components/itemsList";
@@ -83,19 +84,29 @@ const ViewItems = () => {
     if (appState.receiptData && appState.receiptData.initiator) {
       setHandlesArray(
         [
-          { label: "Cash App", prefix: '$', value: appState.receiptData.initiator.cashTag },
-          { label: "Venmo", prefix: '@', value: appState.receiptData.initiator.venmoHandle },
+          {
+            label: "Cash App",
+            prefix: "$",
+            value: appState.receiptData.initiator.cashTag,
+          },
+          {
+            label: "Venmo",
+            prefix: "@",
+            value: appState.receiptData.initiator.venmoHandle,
+          },
         ].filter((handle) => handle.value !== "")
       );
     }
   }, [appState]);
 
   const handlePaymentButtonClick = (handle, myCheckedItems) => {
-    const items = myCheckedItems.map((item) => {
-      return item.description.replaceAll('\r', ' ').replaceAll('\n', ' ');
-    }).join(', ');
+    const items = myCheckedItems
+      .map((item) => {
+        return item.description.replaceAll("\r", " ").replaceAll("\n", " ");
+      })
+      .join(", ");
 
-    let note = '';
+    let note = "";
     if (appState.receiptData.merchant.name) {
       note = `${appState.receiptData.merchant.name}: ${items}`;
     } else {
@@ -104,21 +115,28 @@ const ViewItems = () => {
 
     let url;
     switch (handle.label) {
-      case 'Cash App':
-        url = `https://cash.app/${handle.prefix}${handle.value}/${encodeURIComponent(myTotal.replace('$', ''))}`
+      case "Cash App":
+        url = `https://cash.app/${handle.prefix}${
+          handle.value
+        }/${encodeURIComponent(myTotal.replace("$", ""))}`;
         break;
-      case 'Venmo':
-        url = `https://venmo.com/${handle.value}?txn=pay&note=${encodeURIComponent(note).replaceAll('%20', '%C2%A0')}&amount=${encodeURIComponent(myTotal)} `
+      case "Venmo":
+        url = `https://venmo.com/${
+          handle.value
+        }?txn=pay&note=${encodeURIComponent(note).replaceAll(
+          "%20",
+          "%C2%A0"
+        )}&amount=${encodeURIComponent(myTotal)} `;
         break;
       default:
-        url = ''
+        url = "";
     }
 
     window.location.href = url;
-  }
+  };
 
   return (
-    <>
+    <Suspense>
       {sessionId && (
         <>
           <ItemsList
@@ -144,13 +162,16 @@ const ViewItems = () => {
               })}
           </Subtotals>
           {handlesArray.map((handle, key) => (
-            <Button key={key} onClick={() => handlePaymentButtonClick(handle, myCheckedItems)}>
-              Pay {myTotal} to {handle.prefix}{handle.value} on {handle.label}
+            <Button
+              key={key}
+              onClick={() => handlePaymentButtonClick(handle, myCheckedItems)}>
+              Pay {myTotal} to {handle.prefix}
+              {handle.value} on {handle.label}
             </Button>
           ))}
         </>
       )}
-    </>
+    </Suspense>
   );
 };
 
