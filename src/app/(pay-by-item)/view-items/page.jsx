@@ -13,7 +13,7 @@ const Subtotals = styled.ul``;
 
 const Row = styled.li``;
 
-const ViewItems = () => {
+const ShowItemsList = () => {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("sessionId");
 
@@ -136,7 +136,7 @@ const ViewItems = () => {
   };
 
   return (
-    <Suspense>
+    <>
       {sessionId && (
         <>
           <ItemsList
@@ -171,8 +171,14 @@ const ViewItems = () => {
           ))}
         </>
       )}
-    </Suspense>
+    </>
   );
+};
+
+const ViewItems = () => {
+  <Suspense>
+    <ShowItemsList />
+  </Suspense>;
 };
 
 export default ViewItems;
