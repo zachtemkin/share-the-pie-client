@@ -6,7 +6,6 @@ const StyledButton = styled.button`
   background-color: ${(props) =>
     props.backgroundColor ? props.backgroundColor : "#fff"};
   color: ${(props) => (props.textColor ? props.textColor : "#000")};
-  font-size: 1rem;
   font-weight: bold;
   border: none;
   border-radius: ${(props) => props.theme.surfaceBorderRadius};
@@ -15,13 +14,15 @@ const StyledButton = styled.button`
   ${(props) =>
     props.size === "small" &&
     `
-      font-weight: normal;
+      font-size: 1rem;
+      line-height: 1.5rem;
       padding: 0.25rem 0.5rem;
     `};
 
   ${(props) =>
     props.size === "large" &&
     `
+      font-size: 1.125rem;
       line-height: 2rem;
       width: 100%;
       height: 3.5rem;

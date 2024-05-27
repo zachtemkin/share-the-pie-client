@@ -3,8 +3,7 @@ import styled from "styled-components";
 
 const StyledInstructions = styled.div`
   color: rgba(255, 255, 255, 1);
-  background: rgba(255, 255, 255, 0.075);
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 600;
   border: none;
   border-radius: ${(props) => props.theme.surfaceBorderRadius};

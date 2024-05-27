@@ -168,7 +168,7 @@ const AddHandles = () => {
             onChange={handleChange}
           />
           <Button type="submit" size="large">
-            Next
+            Continue
           </Button>
         </Stack>
       </form>
