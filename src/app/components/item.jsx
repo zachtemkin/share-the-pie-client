@@ -7,7 +7,7 @@ const ItemWrapper = styled.li`
   font-size: 1rem;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.75rem;
   width: 100%;
   padding: 0 ${(props) => props.theme.surfacePadding};
   min-height: 3.5rem;
@@ -17,7 +17,6 @@ const ItemWrapper = styled.li`
 
   &:active {
     opacity: 0.75;
-    transform: scale(0.95);
   }
 
   &.isChecked {
@@ -36,6 +35,7 @@ const Description = styled.p`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-weight: 600;
 `;
 
 const Price = styled.p``;

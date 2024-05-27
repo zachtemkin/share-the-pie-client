@@ -7,8 +7,8 @@ const StyledInstructions = styled.div`
   font-weight: 600;
   border: none;
   border-radius: ${(props) => props.theme.surfaceBorderRadius};
-  height: 3.5rem;
-  min-height: 3.5rem;
+  height: 2.5rem;
+  min-height: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
