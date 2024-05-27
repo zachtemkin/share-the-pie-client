@@ -17,21 +17,20 @@ const CameraPreview = styled.video`
   background-size: cover;
   overflow: hidden;
   height: auto;
-  min-height: calc(100% - 12rem);
+  min-height: calc(100% - 8rem);
   background: rgba(255, 255, 255, 0.125);
   width: auto;
   object-fit: cover;
   border-radius: ${(props) => props.theme.surfaceBorderRadius};
   flex: 1;
+  transition: 0.2s all;
+
   ${(props) =>
     props.$isUploading === true &&
     `
       opacity: 0.25;
+      transform: scale(0.8)
     `};
-`;
-
-const Padding = styled.div`
-  // padding: 1rem 0;
 `;
 
 const Camera = () => {
@@ -127,7 +126,9 @@ const Camera = () => {
 
   return (
     <Container $isFixedHeight={true}>
-      <Instructions>Scan a group receipt</Instructions>
+      <Instructions>
+        {!isUploading ? "Scan a group receipt" : "Please wait"}
+      </Instructions>
       <CameraPreview
         ref={videoRef}
         autoPlay={true}
@@ -135,15 +136,9 @@ const Camera = () => {
         playsInline={true}
         $isUploading={isUploading}
       />
-      <Padding>
-        {!isUploading ? (
-          <Button onClick={takePicture} size="large">
-            Scan
-          </Button>
-        ) : (
-          <Instructions>Processing</Instructions>
-        )}
-      </Padding>
+      <Button onClick={takePicture} size="large" disabled={isUploading}>
+        Scan
+      </Button>
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
     </Container>
   );

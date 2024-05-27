@@ -42,6 +42,11 @@ const StyledButton = styled.button`
     opacity: 0.75;
     transform: scale(0.95);
   }
+
+  &:disabled {
+    pointer-events: none;
+    opacity: 0.25;
+  }
 `;
 
 const Button = ({ children, ...rest }) => {
