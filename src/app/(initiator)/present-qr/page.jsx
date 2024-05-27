@@ -15,8 +15,8 @@ import SessionMembersIndicator from "@/app/components/sessionMembersIndicator";
 import Gap from "@/app/components/gap";
 
 const QRCode = styled.img`
-  width: 100vw;
-  height: 100vw;
+  width: calc(100vw - 1rem);
+  height: calc(100vw - 1rem);
   border-radius: ${(props) => props.theme.surfaceBorderRadius};
   overflow: hidden;
   opacity: 1;

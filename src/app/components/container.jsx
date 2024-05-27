@@ -9,6 +9,8 @@ const StyledContainer = styled.div`
   gap: 1rem;
   padding-top: 1rem;
   padding-bottom: ${(props) => (props.$isStandalone ? 3 : 1)}rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 
   ${(props) =>
     props.$isFixedHeight &&
