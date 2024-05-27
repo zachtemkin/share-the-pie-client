@@ -133,6 +133,10 @@ const QrPage = () => {
     setMyCheckedItems(newMyCheckedItems);
   };
 
+  const handleClearAppState = () => {
+    setAppState({ sessionId: null });
+  };
+
   return (
     <>
       {appState.sessionId && isConnected ? (
@@ -156,7 +160,7 @@ const QrPage = () => {
           />
           <Gap />
           <Button
-            onClick={() => setAppState({ sessionId: null })}
+            onClick={handleClearAppState}
             $size="large"
             $isDestructive={true}
           >
