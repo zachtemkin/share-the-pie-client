@@ -11,7 +11,7 @@ const StyledContainer = styled.div`
   padding-bottom: ${(props) => (props.$isStandalone ? 3 : 1)}rem;
 
   ${(props) =>
-    !props.$isScrollable &&
+    props.$isFixedHeight &&
     `
       // To make sure iOS Safari uses correct height (doesn't include nav bar)
       height: 100%;
@@ -20,13 +20,13 @@ const StyledContainer = styled.div`
     `};
 `;
 
-const Container = ({ isScrollable, children, ...rest }) => {
+const Container = ({ isFixedHeight, children, ...rest }) => {
   const isStandalone = useDetectStandaloneMode();
 
   return (
     <StyledContainer
       $isStandalone={isStandalone}
-      $isScrollable={isScrollable}
+      $isFixedHeight={isFixedHeight}
       {...rest}
     >
       {children}

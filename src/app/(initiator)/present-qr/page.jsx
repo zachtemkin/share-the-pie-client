@@ -142,7 +142,6 @@ const QrPage = () => {
             onMyCheckedItemsChange={handleSetMyCheckedItems}
             myCheckedItems={myCheckedItems}
           />
-          <Gap />
           <Button
             onClick={() => setAppState({ sessionId: null })}
             size="large"

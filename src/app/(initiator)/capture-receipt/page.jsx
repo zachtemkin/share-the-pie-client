@@ -126,7 +126,7 @@ const Camera = () => {
   }, [getVideo, router]);
 
   return (
-    <Container $isScrollable={false}>
+    <Container $isFixedHeight={true}>
       <Instructions>Scan a group receipt</Instructions>
       <CameraPreview
         ref={videoRef}
