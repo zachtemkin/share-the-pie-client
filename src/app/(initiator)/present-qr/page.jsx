@@ -19,6 +19,18 @@ const QRCode = styled.img`
   height: 100vw;
   border-radius: ${(props) => props.theme.surfaceBorderRadius};
   overflow: hidden;
+  opacity: 1;
+  transform: scale(1);
+  transition: 0.2s all;
+  position: relative;
+  z-index: 1;
+
+  &:not([src]) {
+    // Prevents border that browser adds on images without sources
+    // before QR code is generated and shown
+    transform: scale(0.9);
+    opacity: 0;
+  }
 `;
 
 const QrPage = () => {

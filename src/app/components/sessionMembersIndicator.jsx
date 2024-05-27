@@ -10,6 +10,8 @@ const SessionMembersWrapper = styled.div`
   margin-top: -0.75rem;
   padding: 0 2rem 1.75rem 2rem;
   width: 100%;
+  position: relative;
+  z-index: 2;
 `;
 
 const SocketIndicator = styled.div`
