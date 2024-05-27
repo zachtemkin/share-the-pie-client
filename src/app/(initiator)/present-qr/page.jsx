@@ -12,9 +12,11 @@ import Container from "@/app/components/container";
 import Instructions from "@/app/components/instructions";
 import Card from "@/app/components/card";
 import SessionMembersIndicator from "@/app/components/sessionMembersIndicator";
+import Gap from "@/app/components/gap";
 
 const QRCode = styled.img`
-  width: 100%;
+  width: 100vw;
+  height: 100vw;
   border-radius: ${(props) => props.theme.surfaceBorderRadius};
   overflow: hidden;
 `;
@@ -131,6 +133,7 @@ const QrPage = () => {
               sessionMembers={sessionMembers}
             />
           </Card>
+          <Gap />
           <Instructions>Select items that you ordered</Instructions>
           <ItemsList
             joinedFrom="present-qr"
@@ -139,6 +142,7 @@ const QrPage = () => {
             onMyCheckedItemsChange={handleSetMyCheckedItems}
             myCheckedItems={myCheckedItems}
           />
+          <Gap />
           <Button
             onClick={() => setAppState({ sessionId: null })}
             size="large"
