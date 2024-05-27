@@ -21,7 +21,7 @@ const QRCode = styled.img`
   overflow: hidden;
   opacity: 1;
   transform: scale(1);
-  transition: 0.2s all;
+  transition: 0.8s all;
   position: relative;
   z-index: 1;
 
