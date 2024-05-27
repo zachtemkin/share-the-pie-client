@@ -43,6 +43,7 @@ const Price = styled.p``;
 const CheckBox = styled.div`
   width: 24px;
   height: 24px;
+  position: relative;
 
   svg {
     position: absolute;
