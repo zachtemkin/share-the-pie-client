@@ -6,7 +6,7 @@ import useDetectDevice from "@/app/hooks/useDetectDevice";
 import useChooseServer from "@/app/hooks/useChooseServer";
 import styled from "styled-components";
 import { useAppContext } from "../../AppContext";
-import Page from "@/app/components/page";
+import Container from "@/app/components/container";
 import Instructions from "@/app/components/instructions";
 import Button from "@/app/components/button";
 
@@ -121,7 +121,7 @@ const Camera = () => {
   }, [getVideo, router]);
 
   return (
-    <Page fullscreen="true">
+    <Container fullscreen="true">
       <Instructions>Scan a group receipt</Instructions>
       <CameraPreview
         ref={videoRef}
@@ -135,7 +135,7 @@ const Camera = () => {
         </Button>
       </Padding>
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
-    </Page>
+    </Container>
   );
 };
 

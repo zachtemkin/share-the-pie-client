@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { useAppContext } from "../../AppContext";
 // import { Suspense } from "react";
 import styled from "styled-components";
-import Page from "@/app/components/page";
+import Container from "@/app/components/container";
 import Instructions from "@/app/components/instructions";
 import Button from "../../components/button";
 import ItemsList from "../../components/itemsList";
@@ -170,7 +170,7 @@ const ViewItems = () => {
   return (
     <>
       {sessionId && (
-        <Page>
+        <Container>
           <Instructions>Select items that you ordered</Instructions>
           <ItemsList
             joinedFrom="view-items"
@@ -210,7 +210,7 @@ const ViewItems = () => {
               {handle.value} on {handle.label}
             </Button>
           ))}
-        </Page>
+        </Container>
       )}
     </>
   );

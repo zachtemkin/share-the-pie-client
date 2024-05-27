@@ -6,7 +6,7 @@ import { useAppContext } from "../../AppContext";
 import useChooseServer from "@/app/hooks/useChooseServer";
 import styled from "styled-components";
 import Image from "next/image";
-import Page from "@/app/components/page";
+import Container from "@/app/components/container";
 import Instructions from "@/app/components/instructions";
 import Button from "@/app/components/button";
 
@@ -140,7 +140,7 @@ const AddHandles = () => {
   };
 
   return (
-    <Page>
+    <Container>
       <Instructions>Add your app usernames</Instructions>
       <form onSubmit={handleSubmit} autoComplete="off">
         <Stack>
@@ -172,7 +172,7 @@ const AddHandles = () => {
           </Button>
         </Stack>
       </form>
-    </Page>
+    </Container>
   );
 };
 

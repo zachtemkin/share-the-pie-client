@@ -8,7 +8,7 @@ import ItemsList from "@/app/components/itemsList";
 import { useRouter } from "next/navigation";
 import { useAppContext } from "../../AppContext";
 import useChooseServer from "@/app/hooks/useChooseServer";
-import Page from "@/app/components/page";
+import Container from "@/app/components/container";
 import Instructions from "@/app/components/instructions";
 import Card from "@/app/components/card";
 import SessionMembersIndicator from "@/app/components/sessionMembersIndicator";
@@ -122,7 +122,7 @@ const QrPage = () => {
   return (
     <>
       {appState.sessionId && isConnected ? (
-        <Page>
+        <Container>
           <Instructions>Show this code to everyone</Instructions>
           <Card>
             <QRCode src={qrCode} draggable={false} />
@@ -146,11 +146,11 @@ const QrPage = () => {
           >
             Stop sharing
           </Button>
-        </Page>
+        </Container>
       ) : (
-        <Page>
+        <Container>
           <Instructions>Please wait</Instructions>
-        </Page>
+        </Container>
       )}
     </>
   );

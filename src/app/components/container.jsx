@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import useDetectStandaloneMode from "@/app/hooks/useDetectStandaloneMode";
 
-const StyledPage = styled.div`
+const StyledContainer = styled.div`
   display: flex;
   width: 100vw;
   flex-direction: column;
@@ -20,14 +20,18 @@ const StyledPage = styled.div`
     `};
 `;
 
-const Page = ({ fullscreen, children, ...rest }) => {
+const Container = ({ fullScreen, children, ...rest }) => {
   const isStandalone = useDetectStandaloneMode();
 
   return (
-    <StyledPage $isStandalone={isStandalone} fullscreen={fullscreen} {...rest}>
+    <StyledContainer
+      $isStandalone={isStandalone}
+      fullScreen={fullScreen}
+      {...rest}
+    >
       {children}
-    </StyledPage>
+    </StyledContainer>
   );
 };
 
-export default Page;
+export default Container;
