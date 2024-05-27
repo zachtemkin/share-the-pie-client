@@ -2,20 +2,21 @@ import React from "react";
 import styled from "styled-components";
 
 const SessionMembersWrapper = styled.div`
+  height: 3rem;
   display: flex;
   flex-flow: column nowrap;
-  gap: 1.25rem;
+  gap: 1rem;
   align-items: center;
-  justify-content: space-between;
-  margin-top: -0.75rem;
-  padding: 0 2rem 1.75rem 2rem;
+  justify-content: center;
+  margin-top: -1.25rem;
+  margin-bottom: 1.25rem;
   width: 100%;
   position: relative;
   z-index: 2;
 `;
 
 const SocketIndicator = styled.div`
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.3);
   font-weight: normal;
   &.people-joined {
     font-weight: 600;
@@ -26,11 +27,7 @@ const SocketIndicator = styled.div`
 const MemberIndicatorsWrapper = styled.div`
   display: flex;
   gap: 0.5rem;
-  opacity: 0;
   height: 0.5rem;
-  &.people-joined {
-    opacity: 1;
-  }
 `;
 
 const MemberIndicator = styled.div`
@@ -73,15 +70,13 @@ const SessionMembersIndicator = ({ isConnected, sessionMembers }) => {
           </p>
         )}
       </SocketIndicator>
-      <MemberIndicatorsWrapper
-        className={
-          sessionMembersWithoutSessionCreator.length > 0 ? "people-joined" : ""
-        }
-      >
-        {sessionMembersWithoutSessionCreator.map((member, index) => (
-          <MemberIndicator key={index} />
-        ))}
-      </MemberIndicatorsWrapper>
+      {isConnected && sessionMembersWithoutSessionCreator.length > 0 && (
+        <MemberIndicatorsWrapper>
+          {sessionMembersWithoutSessionCreator.map((member, index) => (
+            <MemberIndicator key={index} />
+          ))}
+        </MemberIndicatorsWrapper>
+      )}
     </SessionMembersWrapper>
   );
 };
