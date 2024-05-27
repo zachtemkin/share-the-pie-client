@@ -19,16 +19,16 @@ const Stack = styled.div`
 const FormField = styled.input`
   width: 100%;
   font-size: 1.125rem;
-  line-height: 2rem;
-  padding: 1rem;
+  line-height: 2.25rem;
+  padding: 0.75rem;
   border-radius: ${(props) => props.theme.surfaceBorderRadius};
   outline: none;
   border: 2px solid rgba(255, 255, 255, 0.25);
   box-sizing: border-box;
   background-repeat: no-repeat;
   background-size: 2rem;
-  background-position: 1rem 50%;
-  text-indent: 2.75rem;
+  background-position: 1.25rem 50%;
+  text-indent: 3.25rem;
   background-color: ${(props) => props.theme.darkSurfaceColor};
   color: #fff;
   font-family: inherit;
