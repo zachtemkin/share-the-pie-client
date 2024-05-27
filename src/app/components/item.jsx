@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
-const Description = styled.p`
-  margin-right: auto;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-const Price = styled.p``;
-
 const ItemWrapper = styled.li`
   display: flex;
   flex-flow: row nowrap;
@@ -39,6 +31,33 @@ const ItemWrapper = styled.li`
   }
 `;
 
+const Description = styled.p`
+  margin-right: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const Price = styled.p``;
+
+const CheckBox = styled.div`
+  width: 24px;
+  height: 24px;
+
+  svg {
+    position: absolute;
+    transition: 0.2s all;
+  }
+
+  .CheckBoxUnchecked {
+    opacity: ${(props) => (props.isChecked ? 0 : 1)};
+  }
+
+  .CheckBoxChecked {
+    opacity: ${(props) => (props.isChecked ? 1 : 0)};
+  }
+`;
+
 const CheckBoxUnchecked = () => {
   return (
     <svg
@@ -47,6 +66,7 @@ const CheckBoxUnchecked = () => {
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      className="CheckBoxUnchecked"
     >
       <rect
         x="1"
@@ -69,6 +89,7 @@ const CheckBoxChecked = ({ isNotCheckedByMe }) => {
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      className="CheckBoxChecked"
     >
       <path
         d="M0 6C0 2.68629 2.68629 0 6 0H18C21.3137 0 24 2.68629 24 6V18C24 21.3137 21.3137 24 18 24H6C2.68629 24 0 21.3137 0 18V6Z"
@@ -97,14 +118,12 @@ const Item = ({ item, handleClick }) => {
         item.isChecked && !item.isCheckedByMe && "isNotCheckedByMe"
       }`}
     >
-      {item.isChecked ? (
+      <CheckBox isChecked={item.isChecked}>
         <CheckBoxChecked
           isNotCheckedByMe={item.isChecked && !item.isCheckedByMe}
         />
-      ) : (
         <CheckBoxUnchecked />
-      )}
-
+      </CheckBox>
       <Description>{item.description}</Description>
       <Price>{priceUSD}</Price>
     </ItemWrapper>
