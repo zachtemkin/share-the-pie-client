@@ -169,7 +169,7 @@ const ItemsList = ({
               handleClick={() => {
                 handleItemClick(item.id);
               }}
-            ></Item>
+            />
           ))}
       </Items>
     </>

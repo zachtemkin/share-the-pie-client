@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import FormattedPrice from "@/app/components/formattedPrice";
 
 const ItemWrapper = styled.li`
   display: flex;
@@ -37,8 +38,6 @@ const Description = styled.p`
   text-overflow: ellipsis;
   font-weight: 600;
 `;
-
-const Price = styled.p``;
 
 const CheckBox = styled.div`
   width: 24px;
@@ -107,25 +106,6 @@ const CheckBoxChecked = ({ isNotCheckedByMe }) => {
 };
 
 const Item = ({ item, handleClick }) => {
-  const formatPriceUSD = (price) => {
-    // Check if the price is an integer (no cents)
-    if (Math.floor(price) === price) {
-      const formatter = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-        minimumFractionDigits: 0, // Avoid showing .00 if no cents
-      });
-      return formatter.format(price);
-    } else {
-      const formatter = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-        minimumFractionDigits: 2, // Ensure cents are always shown if they exist
-      });
-      return formatter.format(price);
-    }
-  };
-
   return (
     <ItemWrapper
       onClick={handleClick}
@@ -140,7 +120,7 @@ const Item = ({ item, handleClick }) => {
         <CheckBoxUnchecked />
       </CheckBox>
       <Description>{item.description}</Description>
-      <Price>{formatPriceUSD(item.price)}</Price>
+      <FormattedPrice value={item.price} />
     </ItemWrapper>
   );
 };

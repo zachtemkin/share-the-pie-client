@@ -10,12 +10,13 @@ import Instructions from "@/app/components/instructions";
 import Button from "../../components/button";
 import ItemsList from "../../components/itemsList";
 import Gap from "@/app/components/gap";
+import FormattedPrice from "@/app/components/formattedPrice";
 
 const Subtotals = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: ${(props) => props.theme.surfacePadding};
+  padding: 0.5rem 1rem 1rem 1rem;
 `;
 
 const Subtotal = styled.div`
@@ -34,6 +35,16 @@ const SubtotalValue = styled.div`
 const SubtotalLabel = styled.div`
   margin-top: 0.5rem;
   color: rgba(255, 255, 255, 0.5);
+`;
+
+const Plus = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.5rem;
+  line-height: 1.75rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.8);
 `;
 
 const ShowItemsList = () => {
@@ -93,12 +104,7 @@ const ShowItemsList = () => {
       0
     );
 
-    const myTotalValueUSD = new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(myTotalValue);
-
-    setMyTotal(myTotalValueUSD);
+    setMyTotal(myTotalValue);
   }, [mySubTotals, setMyTotal]);
 
   const [handlesArray, setHandlesArray] = useState([]);
@@ -143,7 +149,7 @@ const ShowItemsList = () => {
       case "Cash App":
         url = `https://cash.app/${handle.prefix}${
           handle.value
-        }/${encodeURIComponent(myTotal.replace("$", ""))}`;
+        }/${encodeURIComponent(myTotal)}`;
         break;
       case "Venmo":
         url = `https://venmo.com/${
@@ -160,17 +166,11 @@ const ShowItemsList = () => {
     window.location.href = url;
   };
 
-  let subTotalLabels = {
-    myItems: "Items",
-    myTip: "Tip",
-    myTax: "Tax",
-  };
-
   return (
     <>
       {sessionId && (
         <Container>
-          <Instructions>Select items that you ordered</Instructions>
+          <Instructions>Select the items that you ordered</Instructions>
           <ItemsList
             joinedFrom="view-items"
             sessionId={sessionId}
@@ -180,32 +180,40 @@ const ShowItemsList = () => {
           />
           <Gap />
           <Instructions>Pay for your share</Instructions>
-          <Subtotals>
-            {mySubTotals &&
-              Object.keys(mySubTotals).map((subTotalKey, index) => {
-                const subTotalValue = mySubTotals[subTotalKey].toFixed(2);
-                const subTotalValueUSD = new Intl.NumberFormat("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                }).format(subTotalValue);
-
-                return (
-                  <Subtotal key={index}>
-                    <SubtotalValue>{subTotalValueUSD}</SubtotalValue>
-                    <SubtotalLabel>{subTotalLabels[subTotalKey]}</SubtotalLabel>
-                  </Subtotal>
-                );
-              })}
-          </Subtotals>
+          {mySubTotals && (
+            <Subtotals>
+              <Subtotal>
+                <SubtotalValue>
+                  <FormattedPrice value={mySubTotals["myItems"]} />
+                </SubtotalValue>
+                <SubtotalLabel>Items</SubtotalLabel>
+              </Subtotal>
+              <Plus>+</Plus>
+              <Subtotal>
+                <SubtotalValue>
+                  <FormattedPrice value={mySubTotals["myTip"]} />
+                </SubtotalValue>
+                <SubtotalLabel>Tip</SubtotalLabel>
+              </Subtotal>
+              <Plus>+</Plus>
+              <Subtotal>
+                <SubtotalValue>
+                  <FormattedPrice value={mySubTotals["myTax"]} />
+                </SubtotalValue>
+                <SubtotalLabel>Tax</SubtotalLabel>
+              </Subtotal>
+            </Subtotals>
+          )}
           {handlesArray.map((handle, key) => (
             <Button
               key={key}
               onClick={() => handlePaymentButtonClick(handle, myCheckedItems)}
-              size="large"
-              backgroundColor={handle.color}
-              textColor="#fff"
+              $size="large"
+              $backgroundColor={handle.color}
+              $textColor="#fff"
+              disabled={myTotal === 0}
             >
-              Pay {myTotal} to {handle.prefix}
+              Send <FormattedPrice value={myTotal} /> to {handle.prefix}
               {handle.value} on {handle.label}
             </Button>
           ))}

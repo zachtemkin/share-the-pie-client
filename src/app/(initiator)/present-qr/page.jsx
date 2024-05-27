@@ -146,7 +146,7 @@ const QrPage = () => {
             />
           </Card>
           <Gap />
-          <Instructions>Select items that you ordered</Instructions>
+          <Instructions>Select the items that you ordered</Instructions>
           <ItemsList
             joinedFrom="present-qr"
             sessionId={appState.sessionId}
@@ -157,8 +157,8 @@ const QrPage = () => {
           <Gap />
           <Button
             onClick={() => setAppState({ sessionId: null })}
-            size="large"
-            type="destructive"
+            $size="large"
+            $isDestructive={true}
           >
             Stop sharing
           </Button>

@@ -16,6 +16,7 @@ const FormField = styled.input`
   background-color: ${(props) => props.theme.darkSurfaceColor};
   color: #fff;
   font-family: inherit;
+  transition: 0.2s border;
 
   @keyframes blink_input_opacity_to_prevent_scrolling_when_focus {
     0% {
@@ -27,6 +28,7 @@ const FormField = styled.input`
   }
 
   &:focus {
+    border: 2px solid rgba(255, 255, 255, 0.5);
     @media only screen and (hover: none) {
       animation: blink_input_opacity_to_prevent_scrolling_when_focus 0.01s;
     }

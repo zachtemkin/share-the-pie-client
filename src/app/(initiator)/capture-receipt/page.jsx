@@ -136,7 +136,7 @@ const Camera = () => {
         playsInline={true}
         $isUploading={isUploading}
       />
-      <Button onClick={takePicture} size="large" disabled={isUploading}>
+      <Button onClick={takePicture} $size="large" disabled={isUploading}>
         Scan
       </Button>
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>

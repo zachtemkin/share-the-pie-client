@@ -4,15 +4,15 @@ import styled from "styled-components";
 
 const StyledButton = styled.button`
   background-color: ${(props) =>
-    props.backgroundColor ? props.backgroundColor : "#fff"};
-  color: ${(props) => (props.textColor ? props.textColor : "#000")};
+    props.$backgroundColor ? props.$backgroundColor : "#fff"};
+  color: ${(props) => (props.$textColor ? props.$textColor : "#000")};
   font-weight: bold;
   border: none;
   border-radius: ${(props) => props.theme.surfaceBorderRadius};
   flex: 1;
 
   ${(props) =>
-    props.size === "small" &&
+    props.$size === "small" &&
     `
       font-size: 1rem;
       line-height: 1.5rem;
@@ -20,7 +20,7 @@ const StyledButton = styled.button`
     `};
 
   ${(props) =>
-    props.size === "large" &&
+    props.$size === "large" &&
     `
       font-size: 1.125rem;
       line-height: 2rem;
@@ -30,7 +30,7 @@ const StyledButton = styled.button`
     `};
 
   ${(props) =>
-    props.type === "destructive" &&
+    props.$isDestructive === true &&
     `
       color: #fff;
       background: red;
@@ -54,9 +54,10 @@ const Button = ({ children, ...rest }) => {
 };
 
 Button.propTypes = {
-  size: PropTypes.string,
-  backgroundColor: PropTypes.string,
-  textColor: PropTypes.string,
+  $size: PropTypes.string,
+  $isDestructive: PropTypes.bool,
+  $backgroundColor: PropTypes.string,
+  $textColor: PropTypes.string,
 };
 
 export default Button;

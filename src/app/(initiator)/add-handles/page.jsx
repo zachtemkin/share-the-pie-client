@@ -123,7 +123,7 @@ const AddHandles = () => {
             value={initiatorData.sessionId}
             onChange={handleChange}
           />
-          <Button type="submit" size="large">
+          <Button type="submit" $size="large">
             Continue
           </Button>
         </Stack>
