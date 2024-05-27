@@ -24,7 +24,7 @@ const CameraPreview = styled.video`
   border-radius: ${(props) => props.theme.surfaceBorderRadius};
   flex: 1;
   ${(props) =>
-    props.isUploading === true &&
+    props.$isUploading === true &&
     `
       opacity: 0.25;
     `};
@@ -105,13 +105,13 @@ const Camera = () => {
       context.drawImage(video, 0, 0, width, height);
       const imageData = canvas.toDataURL("image/png");
 
-      let data = await uploadDocument(imageData);
-      video.srcObject.getTracks()[0].stop();
-      if (data && data.sessionId) {
+      try {
+        let data = await uploadDocument(imageData);
+        video.srcObject.getTracks()[0].stop();
         setAppState({ sessionId: data.sessionId });
         router.push("/add-handles");
-      } else {
-        alert("Sorry, could not upload image to server!");
+      } catch (error) {
+        alert(error);
       }
     }, 200);
   };
@@ -126,14 +126,14 @@ const Camera = () => {
   }, [getVideo, router]);
 
   return (
-    <Container fullscreen="true">
+    <Container $isScrollable={false}>
       <Instructions>Scan a group receipt</Instructions>
       <CameraPreview
         ref={videoRef}
         autoPlay={true}
         muted={true}
         playsInline={true}
-        isUploading={isUploading}
+        $isUploading={isUploading}
       />
       <Padding>
         {!isUploading ? (
