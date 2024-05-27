@@ -50,11 +50,11 @@ const CheckBox = styled.div`
   }
 
   .CheckBoxUnchecked {
-    opacity: ${(props) => (props.isChecked ? 0 : 1)};
+    opacity: ${(props) => (props.$isChecked ? 0 : 1)};
   }
 
   .CheckBoxChecked {
-    opacity: ${(props) => (props.isChecked ? 1 : 0)};
+    opacity: ${(props) => (props.$isChecked ? 1 : 0)};
   }
 `;
 
@@ -118,7 +118,7 @@ const Item = ({ item, handleClick }) => {
         item.isChecked && !item.isCheckedByMe && "isNotCheckedByMe"
       }`}
     >
-      <CheckBox isChecked={item.isChecked}>
+      <CheckBox $isChecked={item.isChecked}>
         <CheckBoxChecked
           isNotCheckedByMe={item.isChecked && !item.isCheckedByMe}
         />

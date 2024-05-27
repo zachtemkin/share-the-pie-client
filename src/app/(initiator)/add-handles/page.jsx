@@ -106,7 +106,7 @@ const AddHandles = () => {
             value={initiatorData.venmoHandle}
             onChange={handleChange}
             placeholder="Venmo"
-            spellcheck="false"
+            spellCheck="false"
             autoFocus="true"
           />
           <FormField
@@ -115,7 +115,7 @@ const AddHandles = () => {
             value={initiatorData.cashTag}
             onChange={handleChange}
             placeholder="Cash App"
-            spellcheck="false"
+            spellCheck="false"
           />
           <input
             type="hidden"

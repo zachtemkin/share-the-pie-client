@@ -54,10 +54,10 @@ const renderSessionMembersString = (sessionMembers) => {
 };
 
 const SessionMembersIndicator = ({ isConnected, sessionMembers }) => {
-  console.log(sessionMembers);
   const sessionMembersWithoutSessionCreator = sessionMembers.filter(
     (session) => !session.isSessionCreator
   );
+
   return (
     <SessionMembersWrapper>
       <SocketIndicator
