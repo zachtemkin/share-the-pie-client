@@ -3,37 +3,44 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 
 const StyledButton = styled.button`
-  background-color: #fff;
-  color: #000;
-  font-size: 1.125rem;
+  background-color: ${(props) =>
+    props.backgroundColor ? props.backgroundColor : "#fff"};
+  color: ${(props) => (props.textColor ? props.textColor : "#000")};
+  font-size: 1rem;
   font-weight: bold;
   border: none;
-  border-radius: 0.75rem;
-  padding: 0.5rem 1rem;
+  border-radius: ${(props) => props.theme.surfaceBorderRadius};
+  flex: 1;
 
   ${(props) =>
-    props.size === 'small' &&
+    props.size === "small" &&
     `
       font-weight: normal;
-      font-size: 0.9rem;
       padding: 0.25rem 0.5rem;
     `};
 
   ${(props) =>
-    props.size === 'large' &&
+    props.size === "large" &&
     `
       line-height: 2rem;
       width: 100%;
-      font-size: 1.25rem;
-      padding: 0.75rem 1.5rem;
+      height: 3.5rem;
+      min-height: 3.5rem;
     `};
 
-    transition: 0.2s all;
+  ${(props) =>
+    props.type === "destructive" &&
+    `
+      color: #fff;
+      background: red;
+    `};
 
-    &:active {
-      opacity: 0.75;
-      transform: scale(0.95);
-    }
+  transition: 0.2s all;
+
+  &:active {
+    opacity: 0.75;
+    transform: scale(0.95);
+  }
 `;
 
 const Button = ({ children, ...rest }) => {
@@ -42,6 +49,8 @@ const Button = ({ children, ...rest }) => {
 
 Button.propTypes = {
   size: PropTypes.string,
+  backgroundColor: PropTypes.string,
+  textColor: PropTypes.string,
 };
 
 export default Button;

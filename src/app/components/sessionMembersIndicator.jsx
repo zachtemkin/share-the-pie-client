@@ -3,16 +3,20 @@ import styled from "styled-components";
 
 const SessionMembersWrapper = styled.div`
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: column nowrap;
+  gap: 1.25rem;
   align-items: center;
   justify-content: space-between;
-  padding: 0 44px;
+  margin-top: -0.75rem;
+  padding: 0 2rem 1.75rem 2rem;
   width: 100%;
 `;
 
 const SocketIndicator = styled.div`
-  color: rgba(255, 255, 255, 0.5);
-  &.is-connected {
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: normal;
+  &.people-joined {
+    font-weight: 600;
     color: ${(props) => props.theme.connectedColor};
   }
 `;
@@ -20,6 +24,11 @@ const SocketIndicator = styled.div`
 const MemberIndicatorsWrapper = styled.div`
   display: flex;
   gap: 0.5rem;
+  opacity: 0;
+  height: 0.5rem;
+  &.people-joined {
+    opacity: 1;
+  }
 `;
 
 const MemberIndicator = styled.div`
@@ -29,17 +38,47 @@ const MemberIndicator = styled.div`
   border-radius: 0.5rem;
 `;
 
+const renderSessionMembersString = (sessionMembers) => {
+  if (sessionMembers.length === 0) {
+    // When sessionMembers.length is 2, it's just the session creator
+    // One session member is created when the QR code is generated and
+    // the session is started, then another is created in itemsList
+    return "No one has scanned yet";
+  } else if (sessionMembers.length === 1) {
+    return `${sessionMembers.length} person has scanned`;
+  } else {
+    return `${sessionMembers.length} people have scanned`;
+  }
+};
+
 const SessionMembersIndicator = ({ isConnected, sessionMembers }) => {
+  console.log(sessionMembers);
+  const sessionMembersWithoutSessionCreator = sessionMembers.filter(
+    (session) => !session.isSessionCreator
+  );
   return (
     <SessionMembersWrapper>
-      <SocketIndicator className={isConnected ? "is-connected" : ""}>
-        {isConnected && <p>Active</p>}
-      </SocketIndicator>
-      <MemberIndicatorsWrapper>
-        {sessionMembers.map(
-          (member, index) =>
-            !member.isSessionCreator && <MemberIndicator key={index} />
+      <SocketIndicator
+        className={
+          isConnected && sessionMembersWithoutSessionCreator.length > 0
+            ? "people-joined"
+            : ""
+        }
+      >
+        {isConnected && (
+          <p>
+            {renderSessionMembersString(sessionMembersWithoutSessionCreator)}
+          </p>
         )}
+      </SocketIndicator>
+      <MemberIndicatorsWrapper
+        className={
+          sessionMembersWithoutSessionCreator.length > 0 ? "people-joined" : ""
+        }
+      >
+        {sessionMembersWithoutSessionCreator.map((member, index) => (
+          <MemberIndicator key={index} />
+        ))}
       </MemberIndicatorsWrapper>
     </SessionMembersWrapper>
   );

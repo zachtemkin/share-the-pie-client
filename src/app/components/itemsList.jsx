@@ -10,6 +10,9 @@ import Item from "@/app/components/item";
 const Items = styled.ul`
   width: 100%;
   list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 const Description = styled.span``;
@@ -17,6 +20,7 @@ const Description = styled.span``;
 const Price = styled.span``;
 
 const ItemsList = ({
+  joinedFrom,
   sessionId,
   onSubtotalsChange,
   onMyCheckedItemsChange,
@@ -72,7 +76,10 @@ const ItemsList = ({
 
     socket.on("sessionMembersChanged", onSessionMembersChanged);
 
-    socket.emit("newConnection", { sessionId });
+    socket.emit("newConnection", {
+      sessionId,
+      joinedFrom,
+    });
 
     return () => {
       socket.off("connect");
@@ -160,7 +167,8 @@ const ItemsList = ({
               item={item}
               handleClick={() => {
                 handleItemClick(item.id);
-              }}></Item>
+              }}
+            ></Item>
           ))}
       </Items>
     </>

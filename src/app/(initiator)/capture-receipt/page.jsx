@@ -6,56 +6,9 @@ import useDetectDevice from "@/app/hooks/useDetectDevice";
 import useChooseServer from "@/app/hooks/useChooseServer";
 import styled from "styled-components";
 import { useAppContext } from "../../AppContext";
-
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 100vw;
-  height: 100vh;
-  border-radius: 3rem;
-  overflow: hidden;
-`;
-
-const CaptureButton = styled.button`
-  z-index: 2;
-  background-color: #ffffff;
-  width: 50vw;
-  height: 3.5rem;
-  border: none;
-  border-radius: 0.75rem;
-  position: fixed;
-  bottom: 2rem;
-  transition: all 0.2s;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2),
-    0 3px 20px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.3);
-  font-size: 1.125rem;
-  color: rgba(0, 0, 0, 1);
-  font-weight: 600;
-  line-height: 1.25rem;
-
-  &:active {
-    transform: scale(0.9);
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(0, 0, 0, 0.3);
-  }
-
-  @keyframes width-grow {
-    0% {
-      width: 50vw;
-      background: rgba(255, 255, 255, 1);
-    }
-    100% {
-      width: 85vw;
-      background: rgba(255, 255, 255, 0.25);
-    }
-  }
-
-  ${({ isUploading }) =>
-    isUploading &&
-    `
-    mix-blend-mode: overlay;
-    animation: width-grow 2s ease-in-out infinite alternate;
-  `}
-`;
+import Page from "@/app/components/page";
+import Instructions from "@/app/components/instructions";
+import Button from "@/app/components/button";
 
 const CameraPreview = styled.video`
   z-index: 1;
@@ -64,9 +17,16 @@ const CameraPreview = styled.video`
   background-size: cover;
   overflow: hidden;
   height: auto;
-  min-height: 100%;
+  min-height: calc(100% - 12rem);
+  background: rgba(255, 255, 255, 0.125);
   width: auto;
   object-fit: cover;
+  border-radius: ${(props) => props.theme.surfaceBorderRadius};
+  flex: 1;
+`;
+
+const Padding = styled.div`
+  // padding: 1rem 0;
 `;
 
 const Camera = () => {
@@ -142,8 +102,12 @@ const Camera = () => {
 
       let data = await uploadDocument(imageData);
       video.srcObject.getTracks()[0].stop();
-      setAppState({ sessionId: data.sessionId });
-      router.push("/add-handles");
+      if (data && data.sessionId) {
+        setAppState({ sessionId: data.sessionId });
+        router.push("/add-handles");
+      } else {
+        alert("Sorry, could not upload image to server!");
+      }
     }, 200);
   };
 
@@ -157,18 +121,21 @@ const Camera = () => {
   }, [getVideo, router]);
 
   return (
-    <Container>
+    <Page fullscreen="true">
+      <Instructions>Scan a group receipt</Instructions>
       <CameraPreview
         ref={videoRef}
         autoPlay={true}
         muted={true}
         playsInline={true}
       />
-      <CaptureButton onClick={takePicture} $isUploading={isUploading}>
-        {!isUploading ? "Scan" : "Processing..."}
-      </CaptureButton>
+      <Padding>
+        <Button onClick={takePicture} size="large">
+          {!isUploading ? "Scan" : "Processing..."}
+        </Button>
+      </Padding>
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
-    </Container>
+    </Page>
   );
 };
 

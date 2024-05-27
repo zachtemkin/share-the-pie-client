@@ -8,19 +8,15 @@ import ItemsList from "@/app/components/itemsList";
 import { useRouter } from "next/navigation";
 import { useAppContext } from "../../AppContext";
 import useChooseServer from "@/app/hooks/useChooseServer";
+import Page from "@/app/components/page";
+import Instructions from "@/app/components/instructions";
 import Card from "@/app/components/card";
 import SessionMembersIndicator from "@/app/components/sessionMembersIndicator";
 
-const Page = styled.div`
-  text-align: center;
-`;
-
 const QRCode = styled.img`
-  width: 400px;
-`;
-
-const QRWrapper = styled(Card)`
-  background-color: red;
+  width: 100%;
+  border-radius: ${(props) => props.theme.surfaceBorderRadius};
+  overflow: hidden;
 `;
 
 const QrPage = () => {
@@ -124,29 +120,39 @@ const QrPage = () => {
   };
 
   return (
-    <Page>
-      <QRWrapper>
-        <QRCode src={qrCode} draggable={false} />
-        <SessionMembersIndicator
-          isConnected={isConnected}
-          sessionMembers={sessionMembers}
-        />
-      </QRWrapper>
-
-      <Button onClick={() => setAppState({ sessionId: null })}>
-        Close Session
-      </Button>
+    <>
       {appState.sessionId && isConnected ? (
-        <ItemsList
-          sessionId={appState.sessionId}
-          onSubtotalsChange={handleSetMySubtotals}
-          onMyCheckedItemsChange={handleSetMyCheckedItems}
-          myCheckedItems={myCheckedItems}
-        />
+        <Page>
+          <Instructions>Show this code to everyone</Instructions>
+          <Card>
+            <QRCode src={qrCode} draggable={false} />
+            <SessionMembersIndicator
+              isConnected={isConnected}
+              sessionMembers={sessionMembers}
+            />
+          </Card>
+          <Instructions>Select items that you ordered</Instructions>
+          <ItemsList
+            joinedFrom="present-qr"
+            sessionId={appState.sessionId}
+            onSubtotalsChange={handleSetMySubtotals}
+            onMyCheckedItemsChange={handleSetMyCheckedItems}
+            myCheckedItems={myCheckedItems}
+          />
+          <Button
+            onClick={() => setAppState({ sessionId: null })}
+            size="large"
+            type="destructive"
+          >
+            Stop sharing
+          </Button>
+        </Page>
       ) : (
-        <p>Connecting...</p>
+        <Page>
+          <Instructions>Please wait</Instructions>
+        </Page>
       )}
-    </Page>
+    </>
   );
 };
 

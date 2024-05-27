@@ -22,9 +22,9 @@ export default function RootLayout({
   return (
     <AppProvider>
       <ThemeProvider theme={basicTheme}>
-        <html lang='en'>
+        <html lang="en">
           <head>
-            <link rel='manifest' href='/manifest.json' />
+            <link rel="manifest" href="/manifest.json" />
           </head>
           <body className={inter.className}>{children}</body>
         </html>

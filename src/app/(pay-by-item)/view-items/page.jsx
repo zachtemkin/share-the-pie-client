@@ -4,16 +4,40 @@ import useChooseServer from "@/app/hooks/useChooseServer";
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAppContext } from "../../AppContext";
-import { Suspense } from "react";
+// import { Suspense } from "react";
 import styled from "styled-components";
+import Page from "@/app/components/page";
+import Instructions from "@/app/components/instructions";
 import Button from "../../components/button";
 import ItemsList from "../../components/itemsList";
+import Gap from "@/app/components/gap";
 
-const Subtotals = styled.ul``;
+const Subtotals = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: ${(props) => props.theme.surfacePadding};
+`;
 
-const Row = styled.li``;
+const Subtotal = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 
-const ShowItemsList = () => {
+const SubtotalValue = styled.div`
+  width: 6rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+`;
+
+const SubtotalLabel = styled.div`
+  margin-top: 0.5rem;
+  color: rgba(255, 255, 255, 0.5);
+`;
+
+const ViewItems = () => {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("sessionId");
 
@@ -85,14 +109,16 @@ const ShowItemsList = () => {
       setHandlesArray(
         [
           {
-            label: "Cash App",
-            prefix: "$",
-            value: appState.receiptData.initiator.cashTag,
-          },
-          {
             label: "Venmo",
             prefix: "@",
+            color: "#008cff",
             value: appState.receiptData.initiator.venmoHandle,
+          },
+          {
+            label: "Cash App",
+            prefix: "$",
+            color: "#00d64f",
+            value: appState.receiptData.initiator.cashTag,
           },
         ].filter((handle) => handle.value !== "")
       );
@@ -135,16 +161,26 @@ const ShowItemsList = () => {
     window.location.href = url;
   };
 
+  let subTotalLabels = {
+    myItems: "Items",
+    myTip: "Tip",
+    myTax: "Tax",
+  };
+
   return (
     <>
       {sessionId && (
-        <>
+        <Page>
+          <Instructions>Select items that you ordered</Instructions>
           <ItemsList
+            joinedFrom="view-items"
             sessionId={sessionId}
             onSubtotalsChange={handleSetMySubtotals}
             onMyCheckedItemsChange={handleSetMyCheckedItems}
             myCheckedItems={myCheckedItems}
           />
+          <Gap />
+          <Instructions>Pay for your share</Instructions>
           <Subtotals>
             {mySubTotals &&
               Object.keys(mySubTotals).map((subTotalKey, index) => {
@@ -155,30 +191,29 @@ const ShowItemsList = () => {
                 }).format(subTotalValue);
 
                 return (
-                  <Row key={index}>
-                    {subTotalKey}: {subTotalValueUSD}
-                  </Row>
+                  <Subtotal key={index}>
+                    <SubtotalValue>{subTotalValueUSD}</SubtotalValue>
+                    <SubtotalLabel>{subTotalLabels[subTotalKey]}</SubtotalLabel>
+                  </Subtotal>
                 );
               })}
           </Subtotals>
           {handlesArray.map((handle, key) => (
             <Button
               key={key}
-              onClick={() => handlePaymentButtonClick(handle, myCheckedItems)}>
+              onClick={() => handlePaymentButtonClick(handle, myCheckedItems)}
+              size="large"
+              backgroundColor={handle.color}
+              textColor="#fff"
+            >
               Pay {myTotal} to {handle.prefix}
               {handle.value} on {handle.label}
             </Button>
           ))}
-        </>
+        </Page>
       )}
     </>
   );
-};
-
-const ViewItems = () => {
-  <Suspense>
-    <ShowItemsList />
-  </Suspense>;
 };
 
 export default ViewItems;
