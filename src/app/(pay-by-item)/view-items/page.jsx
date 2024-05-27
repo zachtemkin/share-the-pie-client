@@ -1,10 +1,9 @@
 "use client";
 
 import useChooseServer from "@/app/hooks/useChooseServer";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAppContext } from "../../AppContext";
-// import { Suspense } from "react";
 import styled from "styled-components";
 import Container from "@/app/components/container";
 import Instructions from "@/app/components/instructions";
@@ -37,7 +36,7 @@ const SubtotalLabel = styled.div`
   color: rgba(255, 255, 255, 0.5);
 `;
 
-const ViewItems = () => {
+const ShowItemsList = () => {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("sessionId");
 
@@ -213,6 +212,14 @@ const ViewItems = () => {
         </Container>
       )}
     </>
+  );
+};
+
+const ViewItems = () => {
+  return (
+    <Suspense>
+      <ShowItemsList />
+    </Suspense>
   );
 };
 
