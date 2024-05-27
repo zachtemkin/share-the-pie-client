@@ -23,6 +23,11 @@ const CameraPreview = styled.video`
   object-fit: cover;
   border-radius: ${(props) => props.theme.surfaceBorderRadius};
   flex: 1;
+  ${(props) =>
+    props.isUploading === true &&
+    `
+      opacity: 0.25;
+    `};
 `;
 
 const Padding = styled.div`
@@ -128,11 +133,16 @@ const Camera = () => {
         autoPlay={true}
         muted={true}
         playsInline={true}
+        isUploading={isUploading}
       />
       <Padding>
-        <Button onClick={takePicture} size="large">
-          {!isUploading ? "Scan" : "Processing..."}
-        </Button>
+        {!isUploading ? (
+          <Button onClick={takePicture} size="large">
+            Scan
+          </Button>
+        ) : (
+          <Instructions>Processing</Instructions>
+        )}
       </Padding>
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
     </Container>

@@ -21,6 +21,12 @@ const ItemWrapper = styled.li`
   min-height: 3.5rem;
   border-radius: ${(props) => props.theme.surfaceBorderRadius};
   background-color: ${(props) => props.theme.darkSurfaceColor};
+  transition: 0.2s all;
+
+  &:active {
+    opacity: 0.75;
+    transform: scale(0.95);
+  }
 
   &.isChecked {
     color: rgba(0, 0, 0, 1);
