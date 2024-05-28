@@ -9,6 +9,15 @@ import { useAppContext } from "../../AppContext";
 import Container from "@/app/components/container";
 import Instructions from "@/app/components/instructions";
 import Button from "@/app/components/button";
+import Spinner from "@/app/components/spinner";
+
+const SpinnerContainer = styled.div`
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
 
 const CameraPreview = styled.video`
   z-index: 1;
@@ -129,6 +138,11 @@ const Camera = () => {
       <Instructions>
         {!isUploading ? "Scan a group receipt" : "Please wait"}
       </Instructions>
+      {isUploading && (
+        <SpinnerContainer>
+          <Spinner />
+        </SpinnerContainer>
+      )}
       <CameraPreview
         ref={videoRef}
         autoPlay={true}
