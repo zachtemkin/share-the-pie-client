@@ -13,10 +13,8 @@ body {
   background-color: #000;
   color: #fff;
   overflow-x: hidden;
-  border-top-left-radius: 2rem;
-  border-top-right-radius: 2rem;
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
+  /* transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0); */
 }
 
 a {
