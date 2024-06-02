@@ -11,6 +11,7 @@ import useChooseServer from "@/app/hooks/useChooseServer";
 import Container from "@/app/components/container";
 import Instructions from "@/app/components/instructions";
 import Card from "@/app/components/card";
+import FormField from "@/app/components/formField";
 import SessionMembersIndicator from "@/app/components/sessionMembersIndicator";
 import Gap from "@/app/components/gap";
 
@@ -31,6 +32,12 @@ const QRCode = styled.img`
     transform: scale(0.9);
     opacity: 0;
   }
+`;
+
+const ButtonSet = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
 `;
 
 const QrPage = () => {
@@ -96,7 +103,6 @@ const QrPage = () => {
 
     socket.on("connect", onConnect);
     socket.emit("startSession", { sessionId: appState.sessionId });
-    socket.emit("raiseHand", socket.id);
 
     function onSessionMembersChanged(data) {
       setSessionMembers(data.sessionMembers);
@@ -132,9 +138,69 @@ const QrPage = () => {
     setAppState({ sessionId: null });
   };
 
+  async function setTipAmount(sessionId, tip) {
+    try {
+      const response = await fetch(`${server.api}/setTipAmount`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ sessionId, tip }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      await response.json();
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  const handleSetTipAmount = (e) => {
+    const tip = parseFloat(e.target.value);
+
+    setAppState((prevAppState) => ({
+      ...prevAppState,
+      receiptData: {
+        ...prevAppState.receiptData,
+        transaction: {
+          ...prevAppState.receiptData.transaction,
+          tip: tip,
+        },
+      },
+    }));
+    setTipAmount(appState.sessionId, tip);
+    socket.emit("tipAmountChanged", {
+      sessionId: appState.sessionId,
+      tip,
+    });
+  };
+
+  const handleUseSuggestedTipAmount = (tip) => {
+    setAppState((prevAppState) => ({
+      ...prevAppState,
+      receiptData: {
+        ...prevAppState.receiptData,
+        transaction: {
+          ...prevAppState.receiptData.transaction,
+          tip: tip,
+        },
+      },
+    }));
+    setTipAmount(appState.sessionId, tip);
+    socket.emit("tipAmountChanged", {
+      sessionId: appState.sessionId,
+      tip,
+    });
+  };
+
   return (
     <>
-      {appState.sessionId && isConnected ? (
+      {appState.sessionId &&
+      appState.receiptData &&
+      appState.receiptData.transaction &&
+      isConnected ? (
         <Container>
           <Instructions>Show this code to everyone</Instructions>
           <Card>
@@ -145,6 +211,57 @@ const QrPage = () => {
             />
           </Card>
           <Gap />
+          {
+            <>
+              <Instructions>Record tip amount</Instructions>
+              <FormField
+                type="text"
+                id="manualTipAmount"
+                value={appState.receiptData.transaction.tip}
+                onChange={(e) => {
+                  handleSetTipAmount(e);
+                }}
+                placeholder="$0.00"
+                spellCheck="false"
+              />
+              <ButtonSet>
+                <Button
+                  onClick={() => {
+                    handleUseSuggestedTipAmount(
+                      Math.round(appState.receiptData.transaction.total * 18) /
+                        100
+                    );
+                  }}
+                  $size="large"
+                >
+                  18%
+                </Button>
+                <Button
+                  onClick={() => {
+                    handleUseSuggestedTipAmount(
+                      Math.round(appState.receiptData.transaction.total * 20) /
+                        100
+                    );
+                  }}
+                  $size="large"
+                >
+                  20%
+                </Button>
+                <Button
+                  onClick={() => {
+                    handleUseSuggestedTipAmount(
+                      Math.round(appState.receiptData.transaction.total * 22) /
+                        100
+                    );
+                  }}
+                  $size="large"
+                >
+                  22%
+                </Button>
+              </ButtonSet>
+              <Gap />
+            </>
+          }
           <Instructions>Select the items that you ordered</Instructions>
           <ItemsList
             joinedFrom="present-qr"

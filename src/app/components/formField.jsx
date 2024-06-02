@@ -12,11 +12,11 @@ const FormField = styled.input`
   background-repeat: no-repeat;
   background-size: 2rem;
   background-position: 1.25rem 50%;
-  text-indent: 3.25rem;
   background-color: ${(props) => props.theme.darkSurfaceColor};
   color: #fff;
   font-family: inherit;
   transition: 0.2s border;
+  text-indent: 1rem;
 
   @keyframes blink_input_opacity_to_prevent_scrolling_when_focus {
     0% {
@@ -40,10 +40,12 @@ const FormField = styled.input`
   }
 
   &#cashTag {
+    text-indent: 3.25rem;
     background-image: url("/images/cash-app.png");
   }
 
   &#venmoHandle {
+    text-indent: 3.25rem;
     background-image: url("/images/venmo.png");
   }
 `;

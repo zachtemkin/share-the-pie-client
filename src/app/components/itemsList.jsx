@@ -34,6 +34,7 @@ const ItemsList = ({
   const [socketId, setSocketId] = useState("");
   const { appState, setAppState } = useAppContext();
   const [items, setItems] = useState([]);
+  const [manualTipAmount, setManualTipAmount] = useState();
 
   const receiptData = appState.receiptData ? appState.receiptData : {};
 
@@ -59,6 +60,11 @@ const ItemsList = ({
             : item
         )
       );
+    });
+
+    socket.on("tipAmountChanged", (data) => {
+      console.log("tipAmountChanged", data.tip);
+      setManualTipAmount(data.tip);
     });
 
     const onSessionMembersChanged = (data) => {
@@ -125,7 +131,7 @@ const ItemsList = ({
   };
 
   const calculateSubtotals = useCallback(
-    (myCheckedItems) => {
+    (myCheckedItems, manualTipAmount) => {
       if (receiptData && receiptData.transaction) {
         let checkedItemsPrices = [];
         myCheckedItems.map((checkedItem) => {
@@ -141,6 +147,10 @@ const ItemsList = ({
           (myItems / receiptData.transaction.items) *
           receiptData.transaction.tip;
 
+        if (manualTipAmount) {
+          myTip = (myItems / receiptData.transaction.items) * manualTipAmount;
+        }
+
         let myTax =
           (myItems / receiptData.transaction.items) *
           receiptData.transaction.tax;
@@ -154,9 +164,9 @@ const ItemsList = ({
 
   useEffect(() => {
     if (myCheckedItems) {
-      calculateSubtotals(myCheckedItems);
+      calculateSubtotals(myCheckedItems, manualTipAmount);
     }
-  }, [myCheckedItems, calculateSubtotals]);
+  }, [myCheckedItems, calculateSubtotals, manualTipAmount]);
 
   return (
     <>
