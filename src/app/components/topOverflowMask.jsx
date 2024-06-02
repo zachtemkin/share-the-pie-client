@@ -6,19 +6,21 @@ const TopOverflowMask = styled.div`
   position: fixed;
   top: 0;
   z-index: 999;
+  pointer-events: none;
 
   &::before {
     content: "";
     position: absolute;
 
     background-color: transparent;
-    bottom: -3.5rem;
+    bottom: -4rem;
     height: 6rem;
-    margin-left: 0.5rem;
-    width: calc(100vw - 1rem);
+    margin-left: 1rem;
+    width: calc(100vw - 2rem);
     border-top-left-radius: 2rem;
     border-top-right-radius: 2rem;
     box-shadow: 0 -4rem 0 0 #000;
+    pointer-events: none;
   }
 `;
 
