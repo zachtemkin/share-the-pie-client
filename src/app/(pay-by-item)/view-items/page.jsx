@@ -23,10 +23,10 @@ const Subtotal = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-width: 25%;
 `;
 
 const SubtotalValue = styled.div`
-  width: 6rem;
   font-size: 1.5rem;
   font-weight: 600;
   text-align: center;
