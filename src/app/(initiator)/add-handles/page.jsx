@@ -107,7 +107,6 @@ const AddHandles = () => {
             onChange={handleChange}
             placeholder="Venmo"
             spellCheck="false"
-            autoFocus={true}
           />
           <FormField
             type="text"
