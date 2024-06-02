@@ -25,14 +25,10 @@ const StyledBottomOverflowMask = styled.div`
   }
 `;
 
-const BottomOverflowMask = ({ children }) => {
+const BottomOverflowMask = () => {
   const isStandalone = useDetectStandaloneMode();
 
-  return (
-    <StyledBottomOverflowMask $isStandalone={isStandalone}>
-      {children}
-    </StyledBottomOverflowMask>
-  );
+  return <StyledBottomOverflowMask $isStandalone={isStandalone} />;
 };
 
 export default BottomOverflowMask;
