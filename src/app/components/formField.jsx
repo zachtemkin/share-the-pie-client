@@ -29,6 +29,7 @@ const FormField = styled.input`
 
   &:focus {
     border: 2px solid rgba(255, 255, 255, 0.75);
+    background-color: rgba(255, 255, 255, 0.2);
     @media only screen and (hover: none) {
       animation: blink_input_opacity_to_prevent_scrolling_when_focus 0.01s;
     }
