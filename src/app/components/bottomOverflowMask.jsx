@@ -1,10 +1,11 @@
 import styled from "styled-components";
+import useDetectStandaloneMode from "@/app/hooks/useDetectStandaloneMode";
 
-const BottomOverflowMask = styled.div`
+const StyledBottomOverflowMask = styled.div`
   width: 100%;
   height: 3rem;
   position: fixed;
-  bottom: ${(props) => (props.$isStandalone ? 3 : 1)}rem;
+  bottom: ${(props) => (props.$isStandalone ? 3 : 2)}rem;
   z-index: 999;
   pointer-events: none;
 
@@ -23,5 +24,15 @@ const BottomOverflowMask = styled.div`
     pointer-events: none;
   }
 `;
+
+const BottomOverflowMask = ({ children }) => {
+  const isStandalone = useDetectStandaloneMode();
+
+  return (
+    <StyledBottomOverflowMask $isStandalone={isStandalone}>
+      {children}
+    </StyledBottomOverflowMask>
+  );
+};
 
 export default BottomOverflowMask;
