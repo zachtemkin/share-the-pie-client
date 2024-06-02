@@ -117,14 +117,9 @@ const QrPage = () => {
     }
   }, [appState.sessionId, router]);
 
-  const [mySubTotals, setMySubtotals] = useState({
-    myItems: 0,
-    myTip: 0,
-    myTax: 0,
-  });
-
-  const handleSetMySubtotals = (newMySubtotals) => {
-    setMySubtotals(newMySubtotals);
+  const handleSetMySubtotals = () => {
+    // We're not showing subtotals on this page, so no need to do anything here
+    return false;
   };
 
   const [myCheckedItems, setMyCheckedItems] = useState([]);
