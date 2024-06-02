@@ -9,7 +9,7 @@ import Item from "@/app/components/item";
 
 const Items = styled.ul`
   width: 100%;
-  min-height: 25vh;
+  min-height: 50vh;
   list-style-type: none;
   display: flex;
   flex-direction: column;
