@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
@@ -126,7 +127,6 @@ const QrPage = () => {
       socket.off("connect", onConnect);
       socket.off("sessionMembersChanged", onSessionMembersChanged);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -189,6 +189,7 @@ const QrPage = () => {
     } else {
       tipAmount = parseFloat(tip) || 0;
     }
+    console.log(tipAmount);
 
     setAppState((prevAppState) => ({
       ...prevAppState,
