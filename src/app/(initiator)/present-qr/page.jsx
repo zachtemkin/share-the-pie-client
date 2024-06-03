@@ -152,6 +152,11 @@ const QrPage = () => {
 
   async function setTipAmount(sessionId, tip) {
     try {
+      socket.emit("tipAmountChanged", {
+        sessionId,
+        tip,
+      });
+
       const response = await fetch(`${server.api}/setTipAmount`, {
         method: "POST",
         headers: {
@@ -171,12 +176,7 @@ const QrPage = () => {
 
   const debouncedSetTipAmount = useCallback(
     debounce((sessionId, tipAmount) => {
-      setTipAmount(sessionId, tipAmount).then(() => {
-        socket.emit("tipAmountChanged", {
-          sessionId,
-          tip: tipAmount,
-        });
-      });
+      setTipAmount(sessionId, tipAmount);
     }, 500),
     []
   );
