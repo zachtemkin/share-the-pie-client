@@ -92,6 +92,7 @@ const ItemsList = ({
       socket.off("connect");
       socket.off("itemsStatusChanged");
       socket.off("sessionMembersChanged");
+      socket.off("tipAmountChanged");
       socket.off("disconnect");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -147,7 +148,7 @@ const ItemsList = ({
           (myItems / receiptData.transaction.items) *
           receiptData.transaction.tip;
 
-        if (manualTipAmount) {
+        if (manualTipAmount !== undefined) {
           myTip = (myItems / receiptData.transaction.items) * manualTipAmount;
         }
 

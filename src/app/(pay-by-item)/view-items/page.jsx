@@ -69,7 +69,6 @@ const ShowItemsList = () => {
         }
 
         const data = await response.json();
-        console.log(data);
         setAppState((prevAppState) => ({ ...prevAppState, receiptData: data }));
       } catch (error) {
         console.error("Error:", error);

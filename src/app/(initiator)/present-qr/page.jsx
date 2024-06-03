@@ -182,14 +182,7 @@ const QrPage = () => {
   );
 
   const handleSetTipAmount = (tip) => {
-    let tipAmount;
-
-    if (tip === "") {
-      tipAmount = 0;
-    } else {
-      tipAmount = parseFloat(tip) || 0;
-    }
-    console.log(tipAmount);
+    let tipAmount = parseFloat(tip) || 0;
 
     setAppState((prevAppState) => ({
       ...prevAppState,
