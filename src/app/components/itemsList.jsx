@@ -63,7 +63,6 @@ const ItemsList = ({
     });
 
     socket.on("tipAmountChanged", (data) => {
-      console.log(data.tip);
       setManualTipAmount(data.tip);
     });
 
