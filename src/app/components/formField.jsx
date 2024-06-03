@@ -16,7 +16,7 @@ const FormField = styled.input`
   color: #fff;
   font-family: inherit;
   transition: 0.2s border;
-  text-indent: 1rem;
+  text-indent: ${(props) => props.$textIndent || "1rem"};
 
   @keyframes blink_input_opacity_to_prevent_scrolling_when_focus {
     0% {

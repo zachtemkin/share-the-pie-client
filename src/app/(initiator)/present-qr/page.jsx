@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import io from "socket.io-client";
 import styled from "styled-components";
 import Button from "@/app/components/button";
@@ -14,6 +14,7 @@ import Card from "@/app/components/card";
 import FormField from "@/app/components/formField";
 import SessionMembersIndicator from "@/app/components/sessionMembersIndicator";
 import Gap from "@/app/components/gap";
+import { debounce } from "lodash";
 
 const QRCode = styled.img`
   width: calc(100vw - 2rem);
@@ -32,6 +33,17 @@ const QRCode = styled.img`
     transform: scale(0.9);
     opacity: 0;
   }
+`;
+
+const FormFieldWithPrefix = styled.div`
+  position: relative;
+`;
+
+const Prefix = styled.div`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: calc(1.75rem + 2px);
 `;
 
 const ButtonSet = styled.div`
@@ -157,8 +169,26 @@ const QrPage = () => {
     }
   }
 
-  const handleSetTipAmount = (e) => {
-    const tip = parseFloat(e.target.value);
+  const debouncedSetTipAmount = useCallback(
+    debounce((sessionId, tipAmount) => {
+      setTipAmount(sessionId, tipAmount).then(() => {
+        socket.emit("tipAmountChanged", {
+          sessionId,
+          tip: tipAmount,
+        });
+      });
+    }, 500),
+    []
+  );
+
+  const handleSetTipAmount = (tip) => {
+    let tipAmount;
+
+    if (tip === "") {
+      tipAmount = 0;
+    } else {
+      tipAmount = parseFloat(tip) || 0;
+    }
 
     setAppState((prevAppState) => ({
       ...prevAppState,
@@ -170,29 +200,8 @@ const QrPage = () => {
         },
       },
     }));
-    setTipAmount(appState.sessionId, tip);
-    socket.emit("tipAmountChanged", {
-      sessionId: appState.sessionId,
-      tip,
-    });
-  };
 
-  const handleUseSuggestedTipAmount = (tip) => {
-    setAppState((prevAppState) => ({
-      ...prevAppState,
-      receiptData: {
-        ...prevAppState.receiptData,
-        transaction: {
-          ...prevAppState.receiptData.transaction,
-          tip: tip,
-        },
-      },
-    }));
-    setTipAmount(appState.sessionId, tip);
-    socket.emit("tipAmountChanged", {
-      sessionId: appState.sessionId,
-      tip,
-    });
+    debouncedSetTipAmount(appState.sessionId, tipAmount);
   };
 
   return (
@@ -214,20 +223,25 @@ const QrPage = () => {
           {
             <>
               <Instructions>Record tip amount</Instructions>
-              <FormField
-                type="text"
-                id="manualTipAmount"
-                value={appState.receiptData.transaction.tip}
-                onChange={(e) => {
-                  handleSetTipAmount(e);
-                }}
-                placeholder="$0.00"
-                spellCheck="false"
-              />
+              <FormFieldWithPrefix>
+                <Prefix>$</Prefix>
+                <FormField
+                  type="text"
+                  id="manualTipAmount"
+                  value={appState.receiptData.transaction.tip || ""}
+                  onChange={(e) => {
+                    handleSetTipAmount(e.target.value);
+                  }}
+                  placeholder="0.00"
+                  spellCheck="false"
+                  $textIndent="1.75rem"
+                  $prefix="$"
+                />
+              </FormFieldWithPrefix>
               <ButtonSet>
                 <Button
                   onClick={() => {
-                    handleUseSuggestedTipAmount(
+                    handleSetTipAmount(
                       Math.round(appState.receiptData.transaction.total * 18) /
                         100
                     );
@@ -238,7 +252,7 @@ const QrPage = () => {
                 </Button>
                 <Button
                   onClick={() => {
-                    handleUseSuggestedTipAmount(
+                    handleSetTipAmount(
                       Math.round(appState.receiptData.transaction.total * 20) /
                         100
                     );
@@ -249,7 +263,7 @@ const QrPage = () => {
                 </Button>
                 <Button
                   onClick={() => {
-                    handleUseSuggestedTipAmount(
+                    handleSetTipAmount(
                       Math.round(appState.receiptData.transaction.total * 22) /
                         100
                     );
