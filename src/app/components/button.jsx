@@ -14,9 +14,12 @@ const StyledButton = styled.button`
   ${(props) =>
     props.$size === "small" &&
     `
-      font-size: 1rem;
-      line-height: 1.5rem;
-      padding: 0.25rem 0.5rem;
+      font-size: 1.125rem;
+      line-height: 2rem;
+      width: 100%;
+      height: 2.5rem;
+      min-height: 2.5rem;
+      padding: 0 0.75rem;
     `};
 
   ${(props) =>

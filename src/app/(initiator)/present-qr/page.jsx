@@ -36,6 +36,27 @@ const QRCode = styled.img`
   }
 `;
 
+const FormFieldWithSuggestions = styled.div`
+  position: relative;
+  z-index: 1;
+`;
+
+const Suggestions = styled.div`
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  right: calc(1.75rem + 2px);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  font-size: 1.125rem;
+`;
+
+const Suggestion = styled.div`
+  color: rgba(255, 255, 255, 0.5);
+`;
+
 const FormFieldWithPrefix = styled.div`
   position: relative;
 `;
@@ -45,12 +66,7 @@ const Prefix = styled.div`
   top: 50%;
   transform: translateY(-50%);
   left: calc(1.75rem + 2px);
-`;
-
-const ButtonSet = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
+  font-size: 1.125rem;
 `;
 
 const QrPage = () => {
@@ -217,56 +233,61 @@ const QrPage = () => {
           {
             <>
               <Instructions>Record tip amount</Instructions>
-              <FormFieldWithPrefix>
-                <Prefix>$</Prefix>
-                <FormField
-                  type="text"
-                  id="manualTipAmount"
-                  value={appState.receiptData.transaction.tip || ""}
-                  onChange={(e) => {
-                    handleSetTipAmount(e.target.value);
-                  }}
-                  placeholder="0.00"
-                  spellCheck="false"
-                  $textIndent="1.75rem"
-                  $prefix="$"
-                />
-              </FormFieldWithPrefix>
-              <ButtonSet>
-                <Button
-                  onClick={() => {
-                    handleSetTipAmount(
-                      Math.round(appState.receiptData.transaction.total * 18) /
-                        100
-                    );
-                  }}
-                  $size="large"
-                >
-                  18%
-                </Button>
-                <Button
-                  onClick={() => {
-                    handleSetTipAmount(
-                      Math.round(appState.receiptData.transaction.total * 20) /
-                        100
-                    );
-                  }}
-                  $size="large"
-                >
-                  20%
-                </Button>
-                <Button
-                  onClick={() => {
-                    handleSetTipAmount(
-                      Math.round(appState.receiptData.transaction.total * 22) /
-                        100
-                    );
-                  }}
-                  $size="large"
-                >
-                  22%
-                </Button>
-              </ButtonSet>
+              <FormFieldWithSuggestions>
+                <Suggestions>
+                  <Suggestion
+                    onClick={() => {
+                      handleSetTipAmount(
+                        Math.round(
+                          appState.receiptData.transaction.total * 18
+                        ) / 100
+                      );
+                    }}
+                    $size="small"
+                  >
+                    18%
+                  </Suggestion>
+                  <Suggestion
+                    onClick={() => {
+                      handleSetTipAmount(
+                        Math.round(
+                          appState.receiptData.transaction.total * 20
+                        ) / 100
+                      );
+                    }}
+                    $size="small"
+                  >
+                    20%
+                  </Suggestion>
+                  <Suggestion
+                    onClick={() => {
+                      handleSetTipAmount(
+                        Math.round(
+                          appState.receiptData.transaction.total * 22
+                        ) / 100
+                      );
+                    }}
+                    $size="small"
+                  >
+                    22%
+                  </Suggestion>
+                </Suggestions>
+                <FormFieldWithPrefix>
+                  <Prefix>$</Prefix>
+                  <FormField
+                    type="text"
+                    id="manualTipAmount"
+                    value={appState.receiptData.transaction.tip || ""}
+                    onChange={(e) => {
+                      handleSetTipAmount(e.target.value);
+                    }}
+                    placeholder="0.00"
+                    spellCheck="false"
+                    $textIndent="2rem"
+                    $prefix="$"
+                  />
+                </FormFieldWithPrefix>
+              </FormFieldWithSuggestions>
               <Gap />
             </>
           }
