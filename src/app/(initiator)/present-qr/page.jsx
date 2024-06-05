@@ -91,6 +91,7 @@ const QrPage = () => {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [sessionMembers, setSessionMembers] = useState([]);
   const [qrCode, setQrCode] = useState();
+  const [parsedTipAmount, setParsedTipAmount] = useState();
   const { appState, setAppState } = useAppContext();
   const router = useRouter();
 
@@ -109,6 +110,7 @@ const QrPage = () => {
 
         const data = await response.json();
 
+        setParsedTipAmount(data.transaction.tip);
         setAppState((prevAppState) => ({ ...prevAppState, receiptData: data }));
       } catch (error) {
         console.error("Error:", error);
@@ -246,7 +248,8 @@ const QrPage = () => {
             />
           </Card>
           <Gap />
-          {
+          {(parsedTipAmount === null ||
+            appState.receiptData.isManualTipAmount) && (
             <>
               <Instructions>Record tip amount</Instructions>
               <FormFieldWithSuggestions>
@@ -342,7 +345,7 @@ const QrPage = () => {
               </FormFieldWithSuggestions>
               <Gap />
             </>
-          }
+          )}
           <Instructions>Select the items that you ordered</Instructions>
           <ItemsList
             joinedFrom="present-qr"
