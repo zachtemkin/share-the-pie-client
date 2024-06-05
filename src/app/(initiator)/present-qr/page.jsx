@@ -249,8 +249,8 @@ const QrPage = () => {
             />
           </Card>
           <Gap />
-          {(parsedTipAmount === null ||
-            appState.receiptData.isManualTipAmount) && (
+          {(parsedTipAmount == null ||
+            appState.receiptData.isManualTipAmount === true) && (
             <>
               <Instructions>Record tip amount</Instructions>
               <FormFieldWithSuggestions>
