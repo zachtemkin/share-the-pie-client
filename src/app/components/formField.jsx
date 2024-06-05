@@ -10,7 +10,7 @@ const FormField = styled.input`
   border: 2px solid rgba(255, 255, 255, 0.25);
   box-sizing: border-box;
   background-repeat: no-repeat;
-  background-size: 2rem;
+  background-size: 1.5rem;
   background-position: 1.25rem 50%;
   background-color: ${(props) => props.theme.darkSurfaceColor};
   color: #fff;
@@ -40,12 +40,12 @@ const FormField = styled.input`
   }
 
   &#cashTag {
-    text-indent: 3.25rem;
+    text-indent: 3rem;
     background-image: url("/images/cash-app.png");
   }
 
   &#venmoHandle {
-    text-indent: 3.25rem;
+    text-indent: 3rem;
     background-image: url("/images/venmo.png");
   }
 `;
