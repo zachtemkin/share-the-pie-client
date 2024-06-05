@@ -2,9 +2,9 @@ import styled from "styled-components";
 
 const FormField = styled.input`
   width: 100%;
-  font-size: 1.125rem;
+  font-size: 1rem;
   line-height: 2.25rem;
-  padding: 0.75rem;
+  padding: 0.5rem;
   border-radius: ${(props) => props.theme.surfaceBorderRadius};
   outline: none;
   border: 2px solid rgba(255, 255, 255, 0.25);

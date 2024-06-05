@@ -36,37 +36,53 @@ const QRCode = styled.img`
   }
 `;
 
-const FormFieldWithSuggestions = styled.div`
-  position: relative;
-  z-index: 1;
-`;
-
 const Suggestions = styled.div`
   position: absolute;
   display: flex;
   flex-direction: row;
-  gap: 1rem;
-  right: calc(1.75rem + 2px);
+  right: calc(0.5rem + 2px);
   top: 50%;
   transform: translateY(-50%);
   z-index: 2;
-  font-size: 1.125rem;
+  font-size: 1rem;
+  height: 100%;
 `;
 
 const Suggestion = styled.div`
-  color: rgba(255, 255, 255, 0.5);
+  align-items: center;
+  display: flex;
+  color: ${(props) =>
+    props.$isSelected ? "rgba(255, 255, 255, 1)" : "rgba(255, 255, 255, 0.5)"};
+  padding: 0.75rem;
+  transition: 0.2s all;
+  height: 100%;
+
+  &:active {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
 `;
 
-const FormFieldWithPrefix = styled.div`
+const FormFieldWithSuggestions = styled.div`
   position: relative;
+  z-index: 1;
 `;
 
 const Prefix = styled.div`
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  left: calc(1.75rem + 2px);
-  font-size: 1.125rem;
+  left: calc(1.25rem + 2px);
+  font-size: 1rem;
+  line-height: 2.25rem;
+`;
+
+const FormFieldWithPrefix = styled.div`
+  position: relative;
+
+  input:placeholder-shown + ${Prefix} {
+    color: rgba(255, 255, 255, 0.25);
+  }
 `;
 
 const QrPage = () => {
@@ -238,42 +254,77 @@ const QrPage = () => {
                   <Suggestion
                     onClick={() => {
                       handleSetTipAmount(
-                        Math.round(
-                          appState.receiptData.transaction.total * 18
-                        ) / 100
+                        (
+                          Math.round(
+                            (appState.receiptData.transaction.total -
+                              appState.receiptData.transaction.tax) *
+                              18
+                          ) / 100
+                        ).toFixed(2)
                       );
                     }}
-                    $size="small"
+                    $isSelected={
+                      parseFloat(appState.receiptData.transaction.tip) ===
+                      Math.round(
+                        (appState.receiptData.transaction.total -
+                          appState.receiptData.transaction.tax) *
+                          18
+                      ) /
+                        100
+                    }
                   >
                     18%
                   </Suggestion>
                   <Suggestion
                     onClick={() => {
                       handleSetTipAmount(
-                        Math.round(
-                          appState.receiptData.transaction.total * 20
-                        ) / 100
+                        (
+                          Math.round(
+                            (appState.receiptData.transaction.total -
+                              appState.receiptData.transaction.tax) *
+                              20
+                          ) / 100
+                        ).toFixed(2)
                       );
                     }}
-                    $size="small"
+                    $isSelected={
+                      parseFloat(appState.receiptData.transaction.tip) ===
+                      Math.round(
+                        (appState.receiptData.transaction.total -
+                          appState.receiptData.transaction.tax) *
+                          20
+                      ) /
+                        100
+                    }
                   >
                     20%
                   </Suggestion>
                   <Suggestion
                     onClick={() => {
                       handleSetTipAmount(
-                        Math.round(
-                          appState.receiptData.transaction.total * 22
-                        ) / 100
+                        (
+                          Math.round(
+                            (appState.receiptData.transaction.total -
+                              appState.receiptData.transaction.tax) *
+                              22
+                          ) / 100
+                        ).toFixed(2)
                       );
                     }}
-                    $size="small"
+                    $isSelected={
+                      parseFloat(appState.receiptData.transaction.tip) ===
+                      Math.round(
+                        (appState.receiptData.transaction.total -
+                          appState.receiptData.transaction.tax) *
+                          22
+                      ) /
+                        100
+                    }
                   >
                     22%
                   </Suggestion>
                 </Suggestions>
                 <FormFieldWithPrefix>
-                  <Prefix>$</Prefix>
                   <FormField
                     type="text"
                     id="manualTipAmount"
@@ -283,9 +334,10 @@ const QrPage = () => {
                     }}
                     placeholder="0.00"
                     spellCheck="false"
-                    $textIndent="2rem"
+                    $textIndent="1.5rem"
                     $prefix="$"
                   />
+                  <Prefix>$</Prefix>
                 </FormFieldWithPrefix>
               </FormFieldWithSuggestions>
               <Gap />
