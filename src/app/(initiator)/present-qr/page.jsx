@@ -20,6 +20,7 @@ import { debounce } from "lodash";
 const QRCode = styled.img`
   width: calc(100vw - 2rem);
   height: calc(100vw - 2rem);
+  min-height: calc(100vw - 2rem);
   border-radius: ${(props) => props.theme.surfaceBorderRadius};
   overflow: hidden;
   opacity: 1;
