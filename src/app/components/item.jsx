@@ -42,6 +42,7 @@ const Description = styled.p`
 
 const CheckBox = styled.div`
   width: 24px;
+  min-width: 24px;
   height: 24px;
   position: relative;
 

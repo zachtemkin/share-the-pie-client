@@ -12,39 +12,40 @@ import ItemsList from "../../components/itemsList";
 import Gap from "@/app/components/gap";
 import FormattedPrice from "@/app/components/formattedPrice";
 
-const Subtotals = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 0.5rem 1rem 1rem 1rem;
-`;
-
-const Subtotal = styled.div`
+const Shares = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  padding: 0.5rem 1.25rem 1.25rem 1.25rem;
+  gap: 0.75rem;
+`;
+
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
   align-items: center;
-  min-width: 25%;
+  justify-content: space-between;
 `;
 
 const SubtotalValue = styled.div`
-  font-size: 1.5rem;
+  font-size: 1rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+`;
+
+const SubtotalLabel = styled.div`
+  color: rgba(255, 255, 255, 0.5);
+`;
+
+const TotalValue = styled.div`
+  font-size: 1.125rem;
   font-weight: 600;
   text-align: center;
 `;
 
-const SubtotalLabel = styled.div`
-  margin-top: 0.5rem;
-  color: rgba(255, 255, 255, 0.5);
-`;
-
-const Plus = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 1.5rem;
-  line-height: 1.75rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.8);
+const TotalLabel = styled.div`
+  font-size: 1.125rem;
+  font-weight: 600;
 `;
 
 const ShowItemsList = () => {
@@ -180,28 +181,32 @@ const ShowItemsList = () => {
           <Gap />
           <Instructions>Pay for your share</Instructions>
           {mySubTotals && (
-            <Subtotals>
-              <Subtotal>
+            <Shares>
+              <Row>
+                <SubtotalLabel>Items</SubtotalLabel>
                 <SubtotalValue>
                   <FormattedPrice value={mySubTotals["myItems"]} />
                 </SubtotalValue>
-                <SubtotalLabel>Items</SubtotalLabel>
-              </Subtotal>
-              <Plus>+</Plus>
-              <Subtotal>
+              </Row>
+              <Row>
+                <SubtotalLabel>Tip</SubtotalLabel>
                 <SubtotalValue>
                   <FormattedPrice value={mySubTotals["myTip"]} />
                 </SubtotalValue>
-                <SubtotalLabel>Tip</SubtotalLabel>
-              </Subtotal>
-              <Plus>+</Plus>
-              <Subtotal>
+              </Row>
+              <Row>
+                <SubtotalLabel>Tax</SubtotalLabel>
                 <SubtotalValue>
                   <FormattedPrice value={mySubTotals["myTax"]} />
                 </SubtotalValue>
-                <SubtotalLabel>Tax</SubtotalLabel>
-              </Subtotal>
-            </Subtotals>
+              </Row>
+              <Row>
+                <TotalLabel>Total</TotalLabel>
+                <TotalValue>
+                  <FormattedPrice value={myTotal} />
+                </TotalValue>
+              </Row>
+            </Shares>
           )}
           {handlesArray.map((handle, key) => (
             <Button
@@ -212,7 +217,7 @@ const ShowItemsList = () => {
               $textColor="#fff"
               disabled={myTotal === 0}
             >
-              Send <FormattedPrice value={myTotal} /> to {handle.prefix}
+              Pay {handle.prefix}
               {handle.value} on {handle.label}
             </Button>
           ))}
