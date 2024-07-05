@@ -56,7 +56,7 @@ const ItemsList = ({
       setItems((items) =>
         items.map((item) =>
           item.id === data.itemId
-            ? { ...item, isChecked: data.isChecked, checkedBy: data.checkedBy }
+            ? { ...item, checkedBy: data.checkedBy }
             : item
         )
       );
@@ -72,8 +72,13 @@ const ItemsList = ({
       if (data.memberLeft) {
         setItems((items) =>
           items.map((item) =>
-            item.checkedBy === data.memberLeft
-              ? { ...item, isChecked: false, checkedBy: null }
+            item.checkedBy.includes(data.memberLeft)
+              ? {
+                  ...item,
+                  checkedBy: item.checkedBy.filter(
+                    (socketId) => socketId !== data.memberLeft
+                  ),
+                }
               : item
           )
         );
@@ -100,10 +105,9 @@ const ItemsList = ({
   const handleItemClick = (itemId) => {
     const updatedItems = items.map((item) => {
       if (item.id === itemId) {
-        if (item.isChecked) {
-          if (item.isCheckedByMe) {
-            socket.emit("setItemUnchecked", { sessionId, itemId });
-            item.isChecked = false;
+        if (item.checkedBy.length > 0) {
+          if (item.checkedBy.includes(socketId)) {
+            socket.emit("setItemUnchecked", { sessionId, itemId, socketId });
             item.isCheckedByMe = false;
 
             onMyCheckedItemsChange(
@@ -116,7 +120,7 @@ const ItemsList = ({
           }
         } else {
           socket.emit("setItemChecked", { sessionId, itemId, socketId });
-          item.isChecked = true;
+          item.checkedBy = [...item.checkedBy, socketId];
           item.isCheckedByMe = true;
 
           onMyCheckedItemsChange((myCheckedItems) => [...myCheckedItems, item]);
