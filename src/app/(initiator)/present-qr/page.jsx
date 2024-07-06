@@ -275,8 +275,7 @@ const QrPage = () => {
                           18
                       ) /
                         100
-                    }
-                  >
+                    }>
                     18%
                   </Suggestion>
                   <Suggestion
@@ -299,8 +298,7 @@ const QrPage = () => {
                           20
                       ) /
                         100
-                    }
-                  >
+                    }>
                     20%
                   </Suggestion>
                   <Suggestion
@@ -323,23 +321,22 @@ const QrPage = () => {
                           22
                       ) /
                         100
-                    }
-                  >
+                    }>
                     22%
                   </Suggestion>
                 </Suggestions>
                 <FormFieldWithPrefix>
                   <FormField
-                    type="text"
-                    id="manualTipAmount"
+                    type='text'
+                    id='manualTipAmount'
                     value={appState.receiptData.transaction.tip || ""}
                     onChange={(e) => {
                       handleSetTipAmount(e.target.value);
                     }}
-                    placeholder="0.00"
-                    spellCheck="false"
-                    $textIndent="1.5rem"
-                    $prefix="$"
+                    placeholder='0.00'
+                    spellCheck='false'
+                    $textIndent='1.5rem'
+                    $prefix='$'
                   />
                   <Prefix>$</Prefix>
                 </FormFieldWithPrefix>
@@ -349,7 +346,7 @@ const QrPage = () => {
           )}
           <Instructions>Select the items that you ordered</Instructions>
           <ItemsList
-            joinedFrom="present-qr"
+            joinedFrom='present-qr'
             sessionId={appState.sessionId}
             onSubtotalsChange={handleSetMySubtotals}
             onMyCheckedItemsChange={handleSetMyCheckedItems}
@@ -358,9 +355,8 @@ const QrPage = () => {
           <Gap />
           <Button
             onClick={handleClearAppState}
-            $size="large"
-            $isDestructive={true}
-          >
+            $size='large'
+            $isDestructive={true}>
             Stop sharing
           </Button>
         </Container>

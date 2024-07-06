@@ -172,7 +172,7 @@ const ShowItemsList = () => {
         <Container>
           <Instructions>Select the items that you ordered</Instructions>
           <ItemsList
-            joinedFrom="view-items"
+            joinedFrom='view-items'
             sessionId={sessionId}
             onSubtotalsChange={handleSetMySubtotals}
             onMyCheckedItemsChange={handleSetMyCheckedItems}
@@ -212,11 +212,10 @@ const ShowItemsList = () => {
             <Button
               key={key}
               onClick={() => handlePaymentButtonClick(handle, myCheckedItems)}
-              $size="large"
+              $size='large'
               $backgroundColor={handle.color}
-              $textColor="#fff"
-              disabled={myTotal === 0}
-            >
+              $textColor='#fff'
+              disabled={myTotal === 0}>
               Pay {handle.prefix}
               {handle.value} on {handle.label}
             </Button>

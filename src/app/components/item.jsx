@@ -105,17 +105,24 @@ const CheckBoxChecked = ({ isNotCheckedByMe }) => {
   );
 };
 
-const Item = ({ item, handleClick }) => {
+const Item = ({ item, mySocketId, handleClick }) => {
   const isChecked = item.checkedBy.length > 0;
 
   return (
     <ItemWrapper
       onClick={handleClick}
       className={`${isChecked && "isChecked"} ${
-        isChecked && !item.isCheckedByMe && "isNotCheckedByMe"
+        isChecked && !item.isNotCheckedByMe && "isNotCheckedByMe"
       }`}>
-      <CheckBox $isChecked={isChecked}>
-        <CheckBoxChecked isNotCheckedByMe={isChecked && !item.isCheckedByMe} />
+      {item.checkedBy
+        .filter((socketId) => socketId !== mySocketId)
+        .map((socketId) => (
+          <CheckBox key={socketId} $isChecked={true}>
+            <CheckBoxChecked isNotCheckedByMe={true} />
+          </CheckBox>
+        ))}
+      <CheckBox $isChecked={item.isCheckedByMe}>
+        <CheckBoxChecked isNotCheckedByMe={false} />
         <CheckBoxUnchecked />
       </CheckBox>
       <Description>{item.description}</Description>

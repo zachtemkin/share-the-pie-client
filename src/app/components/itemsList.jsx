@@ -107,7 +107,18 @@ const ItemsList = ({
       if (item.id === itemId) {
         if (item.checkedBy.length > 0) {
           if (item.checkedBy.includes(socketId)) {
-            socket.emit("setItemUnchecked", { sessionId, itemId, socketId });
+            console.log(
+              "im getting unchecked",
+              item.checkedBy.filter(
+                (checkedBySocketId) => socketId !== checkedBySocketId
+              )
+            );
+            socket.emit("setItemUnchecked", {
+              sessionId,
+              itemId,
+              socketIds: item.checkedBy,
+              mySocketId: socketId,
+            });
             item.isCheckedByMe = false;
 
             onMyCheckedItemsChange(
@@ -116,10 +127,26 @@ const ItemsList = ({
               )
             );
           } else {
-            alert("Someone else has already checked this item!");
+            socket.emit("setItemChecked", {
+              sessionId,
+              itemId,
+              socketIds: [...item.checkedBy, socketId],
+            });
+            item.checkedBy = [...item.checkedBy, socketId];
+            console.log("checked by someone else", item.checkedBy);
+            item.isCheckedByMe = true;
+
+            onMyCheckedItemsChange((myCheckedItems) => [
+              ...myCheckedItems,
+              item,
+            ]);
           }
         } else {
-          socket.emit("setItemChecked", { sessionId, itemId, socketId });
+          socket.emit("setItemChecked", {
+            sessionId,
+            itemId,
+            socketIds: [...item.checkedBy, socketId],
+          });
           item.checkedBy = [...item.checkedBy, socketId];
           item.isCheckedByMe = true;
 
@@ -175,11 +202,13 @@ const ItemsList = ({
   return (
     <>
       <Items>
+        <p>{socketId}</p>
         {items &&
           items.map((item, index) => (
             <Item
               key={item.id}
               item={item}
+              mySocketId={socketId}
               handleClick={() => {
                 handleItemClick(item.id);
               }}
