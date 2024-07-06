@@ -119,13 +119,10 @@ const QrPage = () => {
 
       if (!currentSocketId) {
         currentSocketId = generateSocketId();
-        console.log("Generated new socketId:", currentSocketId);
         const params = new URLSearchParams(searchParams.toString());
         params.set("socketId", currentSocketId);
         const newUrl = `?${params.toString()}`;
         router.replace(newUrl);
-      } else {
-        console.log("Found existing socketId:", currentSocketId);
       }
 
       setSocketId(currentSocketId);
@@ -156,7 +153,6 @@ const QrPage = () => {
         }
 
         const data = await response.json();
-        console.log("Received receipt data:", data);
         setParsedTipAmount(data.transaction.tip);
         setAppState((prevAppState) => ({ ...prevAppState, receiptData: data }));
       } catch (error) {
@@ -188,12 +184,10 @@ const QrPage = () => {
     getQrCode(appState.sessionId);
 
     const onConnect = () => {
-      console.log("Socket connected");
       setIsConnected(true);
     };
 
     const onSessionMembersChanged = (data) => {
-      console.log("Session members changed:", data);
       setSessionMembers(data.sessionMembers);
     };
 
