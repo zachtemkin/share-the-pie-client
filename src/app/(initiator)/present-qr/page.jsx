@@ -1,14 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import io from "socket.io-client";
 import styled from "styled-components";
 import Button from "@/app/components/button";
 import ItemsList from "@/app/components/itemsList";
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useAppContext } from "../../AppContext";
 import useChooseServer from "@/app/hooks/useChooseServer";
+import generateSocketId from "@/app/hooks/useGenerateSocketId";
 import Container from "@/app/components/container";
 import Instructions from "@/app/components/instructions";
 import Card from "@/app/components/card";
@@ -87,82 +88,131 @@ const FormFieldWithPrefix = styled.div`
 `;
 
 const QrPage = () => {
-  const server = useChooseServer();
-  const socket = io(server.socket);
-  const [isConnected, setIsConnected] = useState(socket.connected);
-  const [sessionMembers, setSessionMembers] = useState([]);
-  const [qrCode, setQrCode] = useState();
-  const [parsedTipAmount, setParsedTipAmount] = useState();
-  const { appState, setAppState } = useAppContext();
+  const searchParams = useSearchParams();
   const router = useRouter();
 
+  const [socketId, setSocketId] = useState(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [sessionMembers, setSessionMembers] = useState([]);
+  const [qrCode, setQrCode] = useState(null);
+  const [parsedTipAmount, setParsedTipAmount] = useState(null);
+  const { appState, setAppState } = useAppContext();
+  const server = useChooseServer();
+
   useEffect(() => {
+    let currentSocketId = searchParams.get("socketId");
+
+    if (!currentSocketId) {
+      currentSocketId = generateSocketId();
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("socketId", currentSocketId);
+      const newUrl = `?${params.toString()}`;
+      router.replace(newUrl);
+    }
+
+    setSocketId(currentSocketId);
+  }, [searchParams, router]);
+
+  useEffect(() => {
+    if (!socketId) {
+      let currentSocketId = searchParams.get("socketId");
+
+      if (!currentSocketId) {
+        currentSocketId = generateSocketId();
+        console.log("Generated new socketId:", currentSocketId);
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("socketId", currentSocketId);
+        const newUrl = `?${params.toString()}`;
+        router.replace(newUrl);
+      } else {
+        console.log("Found existing socketId:", currentSocketId);
+      }
+
+      setSocketId(currentSocketId);
+    }
+  }, [searchParams, router, socketId]);
+
+  const memoizedServer = useMemo(() => server, [server]);
+
+  useEffect(() => {
+    if (!socketId) return;
+
+    const socket = io(memoizedServer.socket, {
+      auth: {
+        token: socketId,
+      },
+    });
+
     const getReceiptData = async (sessionId) => {
       try {
-        const response = await fetch(`${server.api}/getReceiptData`, {
+        const response = await fetch(`${memoizedServer.api}/getReceiptData`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ sessionId }),
         });
 
-        if (response && !response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        setParsedTipAmount(data.transaction.tip);
-        setAppState((prevAppState) => ({ ...prevAppState, receiptData: data }));
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-
-    getReceiptData(appState.sessionId);
-
-    async function getQrCode(sessionId) {
-      try {
-        const response = await fetch(`${server.api}/generateQrCode`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ sessionId }),
-        });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
+        console.log("Received receipt data:", data);
+        setParsedTipAmount(data.transaction.tip);
+        setAppState((prevAppState) => ({ ...prevAppState, receiptData: data }));
+      } catch (error) {
+        console.error("Error fetching receipt data:", error);
+      }
+    };
 
+    const getQrCode = async (sessionId) => {
+      try {
+        const response = await fetch(`${memoizedServer.api}/generateQrCode`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionId }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
         console.log(data.url);
-
         setQrCode(data.qrCode);
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error fetching QR code:", error);
       }
-    }
+    };
 
+    getReceiptData(appState.sessionId);
     getQrCode(appState.sessionId);
 
-    function onConnect() {
+    const onConnect = () => {
+      console.log("Socket connected");
       setIsConnected(true);
-    }
+    };
+
+    const onSessionMembersChanged = (data) => {
+      console.log("Session members changed:", data);
+      setSessionMembers(data.sessionMembers);
+    };
 
     socket.on("connect", onConnect);
     socket.emit("startSession", { sessionId: appState.sessionId });
-
-    function onSessionMembersChanged(data) {
-      setSessionMembers(data.sessionMembers);
-    }
-
     socket.on("sessionMembersChanged", onSessionMembersChanged);
 
+    // Cleanup function to avoid memory leaks
     return () => {
       socket.off("connect", onConnect);
       socket.off("sessionMembersChanged", onSessionMembersChanged);
     };
-  }, []);
+  }, [
+    socketId,
+    memoizedServer.api,
+    memoizedServer.socket,
+    appState.sessionId,
+    setAppState,
+  ]);
 
   useEffect(() => {
     if (appState.sessionId == null) {
@@ -275,7 +325,8 @@ const QrPage = () => {
                           18
                       ) /
                         100
-                    }>
+                    }
+                  >
                     18%
                   </Suggestion>
                   <Suggestion
@@ -298,7 +349,8 @@ const QrPage = () => {
                           20
                       ) /
                         100
-                    }>
+                    }
+                  >
                     20%
                   </Suggestion>
                   <Suggestion
@@ -321,22 +373,23 @@ const QrPage = () => {
                           22
                       ) /
                         100
-                    }>
+                    }
+                  >
                     22%
                   </Suggestion>
                 </Suggestions>
                 <FormFieldWithPrefix>
                   <FormField
-                    type='text'
-                    id='manualTipAmount'
+                    type="text"
+                    id="manualTipAmount"
                     value={appState.receiptData.transaction.tip || ""}
                     onChange={(e) => {
                       handleSetTipAmount(e.target.value);
                     }}
-                    placeholder='0.00'
-                    spellCheck='false'
-                    $textIndent='1.5rem'
-                    $prefix='$'
+                    placeholder="0.00"
+                    spellCheck="false"
+                    $textIndent="1.5rem"
+                    $prefix="$"
                   />
                   <Prefix>$</Prefix>
                 </FormFieldWithPrefix>
@@ -346,17 +399,19 @@ const QrPage = () => {
           )}
           <Instructions>Select the items that you ordered</Instructions>
           <ItemsList
-            joinedFrom='present-qr'
+            joinedFrom="present-qr"
             sessionId={appState.sessionId}
             onSubtotalsChange={handleSetMySubtotals}
             onMyCheckedItemsChange={handleSetMyCheckedItems}
             myCheckedItems={myCheckedItems}
+            socketId={socketId}
           />
           <Gap />
           <Button
             onClick={handleClearAppState}
-            $size='large'
-            $isDestructive={true}>
+            $size="large"
+            $isDestructive={true}
+          >
             Stop sharing
           </Button>
         </Container>

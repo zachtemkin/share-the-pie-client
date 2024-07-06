@@ -26,12 +26,16 @@ const ItemsList = ({
   onSubtotalsChange,
   onMyCheckedItemsChange,
   myCheckedItems,
+  socketId,
 }) => {
   const server = useChooseServer();
-  const socket = io(server.socket);
+  const socket = io(server.socket, {
+    auth: {
+      token: socketId,
+    },
+  });
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [sessionMembers, setSessionMembers] = useState([]);
-  const [socketId, setSocketId] = useState("");
   const { appState, setAppState } = useAppContext();
   const [items, setItems] = useState([]);
   const [manualTipAmount, setManualTipAmount] = useState();
@@ -49,10 +53,10 @@ const ItemsList = ({
   useEffect(() => {
     socket.on("connect", () => {
       setIsConnected(true);
-      setSocketId(socket.id);
     });
 
     socket.on("itemsStatusChanged", (data) => {
+      console.log("itemsStatusChanged");
       setItems((items) =>
         items.map((item) =>
           item.id === data.itemId
