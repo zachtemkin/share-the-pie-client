@@ -52,7 +52,7 @@ const renderSessionMembersString = (sessionMembers) => {
 
 const SessionMembersIndicator = ({ isConnected, sessionMembers }) => {
   const sessionMembersWithoutSessionCreator = sessionMembers.filter(
-    (session) => !session.isSessionCreator
+    (member) => !member.isSessionCreator
   );
 
   return (
@@ -62,8 +62,7 @@ const SessionMembersIndicator = ({ isConnected, sessionMembers }) => {
           isConnected && sessionMembersWithoutSessionCreator.length > 0
             ? "people-joined"
             : ""
-        }
-      >
+        }>
         {isConnected && (
           <p>
             {renderSessionMembersString(sessionMembersWithoutSessionCreator)}

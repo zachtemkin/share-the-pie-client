@@ -1,4 +1,6 @@
-function useChooseServer() {
+import { io } from "socket.io-client";
+
+function chooseServer() {
   let server = {};
 
   if (process.env.NODE_ENV === "development") {
@@ -14,4 +16,7 @@ function useChooseServer() {
   return server;
 }
 
-export default useChooseServer;
+const server = chooseServer();
+const socket = io(server.socket);
+
+export default socket;

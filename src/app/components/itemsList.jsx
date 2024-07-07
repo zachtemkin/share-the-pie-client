@@ -1,11 +1,10 @@
 "use client";
 
-import io from "socket.io-client";
 import React, { useState, useCallback, useEffect } from "react";
 import { useAppContext } from "../AppContext";
 import styled from "styled-components";
-import useChooseServer from "@/app/hooks/useChooseServer";
 import Item from "@/app/components/item";
+import socket from "@/app/socket";
 
 const Items = styled.ul`
   width: 100%;
@@ -17,7 +16,6 @@ const Items = styled.ul`
 `;
 
 const Description = styled.span``;
-
 const Price = styled.span``;
 
 const ItemsList = ({
@@ -26,19 +24,14 @@ const ItemsList = ({
   onSubtotalsChange,
   onMyCheckedItemsChange,
   myCheckedItems,
-  socketId,
+  onSessionMembersChanged,
 }) => {
-  const server = useChooseServer();
-  const socket = io(server.socket, {
-    auth: {
-      token: socketId,
-    },
-  });
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [sessionMembers, setSessionMembers] = useState([]);
   const { appState, setAppState } = useAppContext();
   const [items, setItems] = useState([]);
   const [manualTipAmount, setManualTipAmount] = useState();
+  const [socketId, setSocketId] = useState("");
 
   const receiptData = appState.receiptData ? appState.receiptData : {};
 
@@ -53,10 +46,10 @@ const ItemsList = ({
   useEffect(() => {
     socket.on("connect", () => {
       setIsConnected(true);
+      setSocketId(socket.id);
     });
 
     socket.on("itemsStatusChanged", (data) => {
-      console.log("itemsStatusChanged");
       setItems((items) =>
         items.map((item) =>
           item.id === data.itemId
@@ -70,9 +63,9 @@ const ItemsList = ({
       setManualTipAmount(data.tip);
     });
 
-    const onSessionMembersChanged = (data) => {
+    socket.on("sessionMembersChanged", (data) => {
       setSessionMembers(data.sessionMembers);
-
+      onSessionMembersChanged(data.sessionMembers);
       if (data.memberLeft) {
         setItems((items) =>
           items.map((item) =>
@@ -87,13 +80,6 @@ const ItemsList = ({
           )
         );
       }
-    };
-
-    socket.on("sessionMembersChanged", onSessionMembersChanged);
-
-    socket.emit("newConnection", {
-      sessionId,
-      joinedFrom,
     });
 
     return () => {
@@ -103,20 +89,21 @@ const ItemsList = ({
       socket.off("tipAmountChanged");
       socket.off("disconnect");
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [onSessionMembersChanged]);
+
+  useEffect(() => {
+    sessionId &&
+      socket.emit("newConnection", {
+        sessionId,
+        joinedFrom,
+      });
+  }, [sessionId, joinedFrom]);
 
   const handleItemClick = (itemId) => {
     const updatedItems = items.map((item) => {
       if (item.id === itemId) {
         if (item.checkedBy.length > 0) {
           if (item.checkedBy.includes(socketId)) {
-            console.log(
-              "im getting unchecked",
-              item.checkedBy.filter(
-                (checkedBySocketId) => socketId !== checkedBySocketId
-              )
-            );
             socket.emit("setItemUnchecked", {
               sessionId,
               itemId,
@@ -137,7 +124,6 @@ const ItemsList = ({
               socketIds: [...item.checkedBy, socketId],
             });
             item.checkedBy = [...item.checkedBy, socketId];
-            console.log("checked by someone else", item.checkedBy);
             item.isCheckedByMe = true;
 
             onMyCheckedItemsChange((myCheckedItems) => [
@@ -206,7 +192,6 @@ const ItemsList = ({
   return (
     <>
       <Items>
-        <p>{socketId}</p>
         {items &&
           items.map((item, index) => (
             <Item

@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, Suspense } from "react";
 import useChooseServer from "@/app/hooks/useChooseServer";
-import generateSocketId from "@/app/hooks/useGenerateSocketId";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useAppContext } from "../../AppContext";
 import styled from "styled-components";
@@ -53,23 +52,7 @@ const ShowItemsList = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const sessionId = searchParams.get("sessionId");
-  let socketId = searchParams.get("socketId");
-
-  useEffect(() => {
-    if (!socketId) {
-      const newSocketId = generateSocketId();
-      const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.set("socketId", newSocketId);
-      router.replace(`/view-items?${newSearchParams.toString()}`);
-    }
-  }, [socketId, searchParams, router]);
-
-  if (searchParams.has("socketId")) {
-    socketId = searchParams.get("socketId");
-  }
-
   const { appState, setAppState } = useAppContext();
-
   const server = useChooseServer();
 
   useEffect(() => {
@@ -188,12 +171,12 @@ const ShowItemsList = () => {
         <Container>
           <Instructions>Select the items that you ordered</Instructions>
           <ItemsList
-            joinedFrom="view-items"
+            joinedFrom='view-items'
             sessionId={sessionId}
             onSubtotalsChange={handleSetMySubtotals}
             onMyCheckedItemsChange={handleSetMyCheckedItems}
             myCheckedItems={myCheckedItems}
-            socketId={socketId}
+            onSessionMembersChanged={() => {}}
           />
           <Gap />
           <Instructions>Pay for your share</Instructions>
@@ -229,11 +212,10 @@ const ShowItemsList = () => {
             <Button
               key={key}
               onClick={() => handlePaymentButtonClick(handle, myCheckedItems)}
-              $size="large"
+              $size='large'
               $backgroundColor={handle.color}
-              $textColor="#fff"
-              disabled={myTotal === 0}
-            >
+              $textColor='#fff'
+              disabled={myTotal === 0}>
               Pay {handle.prefix}
               {handle.value} on {handle.label}
             </Button>
