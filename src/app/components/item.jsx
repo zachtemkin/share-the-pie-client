@@ -21,14 +21,9 @@ const ItemWrapper = styled.li`
     transform: scale(0.95);
   }
 
-  &.isChecked {
+  &.isCheckedByMe {
     color: rgba(0, 0, 0, 1);
     background: rgba(255, 255, 255, 1);
-  }
-
-  &.isNotCheckedByMe {
-    color: rgb(75, 75, 75, 1);
-    background: rgba(255, 255, 255, 0.075);
   }
 `;
 
@@ -83,7 +78,29 @@ const CheckBoxUnchecked = () => {
   );
 };
 
-const CheckBoxChecked = ({ isNotCheckedByMe }) => {
+const CheckBoxChecked = ({ $isChecked, isCheckedByMe }) => {
+  let backgroundColor;
+  if (isCheckedByMe) {
+    backgroundColor = "#000";
+  } else {
+    if ($isChecked) {
+      backgroundColor = "#000";
+    } else {
+      backgroundColor = "rgb(75, 75, 75)";
+    }
+  }
+
+  let checkColor;
+  if (isCheckedByMe) {
+    checkColor = "#fff";
+  } else {
+    if ($isChecked) {
+      checkColor = "#fff";
+    } else {
+      checkColor = "#000";
+    }
+  }
+
   return (
     <svg
       width="24"
@@ -95,13 +112,13 @@ const CheckBoxChecked = ({ isNotCheckedByMe }) => {
     >
       <path
         d="M0 6C0 2.68629 2.68629 0 6 0H18C21.3137 0 24 2.68629 24 6V18C24 21.3137 21.3137 24 18 24H6C2.68629 24 0 21.3137 0 18V6Z"
-        fill={isNotCheckedByMe ? "rgb(75, 75, 75, 1)" : "#000"}
+        fill={backgroundColor}
       />
       <path
         fillRule="evenodd"
         clipRule="evenodd"
         d="M19.3224 7.1578C18.7031 6.53855 17.6991 6.53855 17.0799 7.1578L10.0371 14.2006L7.10479 11.2683C6.48554 10.649 5.48152 10.649 4.86227 11.2683C4.24301 11.8876 4.24301 12.8916 4.86227 13.5108L8.90736 17.5559C8.96581 17.6144 9.02768 17.6673 9.09233 17.7147C9.71324 18.1774 10.5959 18.1269 11.1596 17.5631L19.3224 9.40033C19.9416 8.78107 19.9416 7.77706 19.3224 7.1578Z"
-        fill={isNotCheckedByMe ? "#000" : "#fff"}
+        fill={checkColor}
       />
     </svg>
   );
@@ -114,18 +131,21 @@ const Item = ({ item, mySocketId, handleClick }) => {
     <ItemWrapper
       onClick={handleClick}
       className={`${isChecked && "isChecked"} ${
-        isChecked && !item.isNotCheckedByMe && "isNotCheckedByMe"
+        isChecked && item.isCheckedByMe && "isCheckedByMe"
       }`}
     >
       {item.checkedBy
         .filter((socketId) => socketId !== mySocketId)
         .map((socketId) => (
           <CheckBox key={socketId} $isChecked={true}>
-            <CheckBoxChecked isNotCheckedByMe={true} />
+            <CheckBoxChecked
+              isCheckedByMe={false}
+              $isChecked={item.isCheckedByMe}
+            />
           </CheckBox>
         ))}
       <CheckBox $isChecked={item.isCheckedByMe}>
-        <CheckBoxChecked isNotCheckedByMe={false} />
+        <CheckBoxChecked isCheckedByMe={true} $isChecked={item.isCheckedByMe} />
         <CheckBoxUnchecked />
       </CheckBox>
       <Description>{item.description}</Description>
