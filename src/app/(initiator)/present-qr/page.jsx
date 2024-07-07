@@ -93,7 +93,8 @@ const QrPage = () => {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [sessionMembers, setSessionMembers] = useState([]);
   const [qrCode, setQrCode] = useState(null);
-  const [parsedTipAmount, setParsedTipAmount] = useState(null);
+  const [tipAmount, setTipAmount] = useState(null);
+  const [isManualTipAmount, setIsManualTipAmount] = useState(false);
   const { appState, setAppState } = useAppContext();
   const server = useChooseServer();
 
@@ -111,7 +112,8 @@ const QrPage = () => {
         }
 
         const data = await response.json();
-        setParsedTipAmount(data.transaction.tip);
+        setTipAmount(data.transaction.tip);
+        setIsManualTipAmount(data.isManualTipAmount);
         setAppState((prevAppState) => ({ ...prevAppState, receiptData: data }));
       } catch (error) {
         console.error("Error fetching receipt data:", error);
@@ -174,7 +176,7 @@ const QrPage = () => {
     setAppState({ sessionId: null });
   };
 
-  async function setTipAmount(sessionId, tip) {
+  async function saveTipAmount(sessionId, tip) {
     try {
       socket.emit("tipAmountChanged", {
         sessionId,
@@ -198,28 +200,19 @@ const QrPage = () => {
     }
   }
 
-  const debouncedSetTipAmount = useCallback(
-    debounce((sessionId, tipAmount) => {
-      setTipAmount(sessionId, tipAmount);
+  const debouncedSaveTipAmount = useCallback(
+    debounce((sessionId, tip) => {
+      let tipAmount = parseFloat(tip) || 0; // Float here to save in the database
+      saveTipAmount(sessionId, tipAmount);
     }, 500),
     []
   );
 
   const handleSetTipAmount = (tip) => {
-    let tipAmount = parseFloat(tip) || 0;
+    setTipAmount(tip); // String here to render in the input field
+    setIsManualTipAmount(true);
 
-    setAppState((prevAppState) => ({
-      ...prevAppState,
-      receiptData: {
-        ...prevAppState.receiptData,
-        transaction: {
-          ...prevAppState.receiptData.transaction,
-          tip: tip,
-        },
-      },
-    }));
-
-    debouncedSetTipAmount(appState.sessionId, tipAmount);
+    debouncedSaveTipAmount(appState.sessionId, tip);
   };
 
   return (
@@ -238,8 +231,7 @@ const QrPage = () => {
             />
           </Card>
           <Gap />
-          {(parsedTipAmount == null ||
-            appState.receiptData.isManualTipAmount === true) && (
+          {(tipAmount == null || isManualTipAmount === true) && (
             <>
               <Instructions>Record tip amount</Instructions>
               <FormFieldWithSuggestions>
@@ -257,14 +249,15 @@ const QrPage = () => {
                       );
                     }}
                     $isSelected={
-                      parseFloat(appState.receiptData.transaction.tip) ===
+                      parseFloat(tipAmount) ===
                       Math.round(
                         (appState.receiptData.transaction.total -
                           appState.receiptData.transaction.tax) *
                           18
                       ) /
                         100
-                    }>
+                    }
+                  >
                     18%
                   </Suggestion>
                   <Suggestion
@@ -280,14 +273,15 @@ const QrPage = () => {
                       );
                     }}
                     $isSelected={
-                      parseFloat(appState.receiptData.transaction.tip) ===
+                      parseFloat(tipAmount) ===
                       Math.round(
                         (appState.receiptData.transaction.total -
                           appState.receiptData.transaction.tax) *
                           20
                       ) /
                         100
-                    }>
+                    }
+                  >
                     20%
                   </Suggestion>
                   <Suggestion
@@ -303,29 +297,30 @@ const QrPage = () => {
                       );
                     }}
                     $isSelected={
-                      parseFloat(appState.receiptData.transaction.tip) ===
+                      parseFloat(tipAmount) ===
                       Math.round(
                         (appState.receiptData.transaction.total -
                           appState.receiptData.transaction.tax) *
                           22
                       ) /
                         100
-                    }>
+                    }
+                  >
                     22%
                   </Suggestion>
                 </Suggestions>
                 <FormFieldWithPrefix>
                   <FormField
-                    type='text'
-                    id='manualTipAmount'
-                    value={appState.receiptData.transaction.tip || ""}
+                    type="text"
+                    id="manualTipAmount"
+                    value={tipAmount || ""}
                     onChange={(e) => {
                       handleSetTipAmount(e.target.value);
                     }}
-                    placeholder='0.00'
-                    spellCheck='false'
-                    $textIndent='1.5rem'
-                    $prefix='$'
+                    placeholder="0.00"
+                    spellCheck="false"
+                    $textIndent="1.5rem"
+                    $prefix="$"
                   />
                   <Prefix>$</Prefix>
                 </FormFieldWithPrefix>
@@ -335,7 +330,7 @@ const QrPage = () => {
           )}
           <Instructions>Select the items that you ordered</Instructions>
           <ItemsList
-            joinedFrom='present-qr'
+            joinedFrom="present-qr"
             sessionId={appState.sessionId}
             onSubtotalsChange={handleSetMySubtotals}
             onMyCheckedItemsChange={handleSetMyCheckedItems}
@@ -345,8 +340,9 @@ const QrPage = () => {
           <Gap />
           <Button
             onClick={handleClearAppState}
-            $size='large'
-            $isDestructive={true}>
+            $size="large"
+            $isDestructive={true}
+          >
             Stop sharing
           </Button>
         </Container>
