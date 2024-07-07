@@ -18,7 +18,7 @@ const ItemWrapper = styled.li`
 
   &:active {
     opacity: 0.75;
-    transform: scale(0.95);
+    // transform: scale(0.95);
   }
 
   &.isCheckedByMe {
