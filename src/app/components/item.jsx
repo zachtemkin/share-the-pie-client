@@ -148,7 +148,11 @@ const Item = ({ item, mySocketId, handleClick }) => {
         <CheckBoxUnchecked />
       </CheckBox>
       <Description>{item.description}</Description>
-      <FormattedPrice value={item.price} />
+      <FormattedPrice
+        value={
+          item.price / (item.checkedBy.length > 0 ? item.checkedBy.length : 1)
+        }
+      />
     </ItemWrapper>
   );
 };
