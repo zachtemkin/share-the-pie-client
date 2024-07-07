@@ -147,6 +147,7 @@ const ItemsList = ({
             itemId,
             socketIds: [...item.checkedBy, socketId],
           });
+          console.log(socketId);
           item.checkedBy = [...item.checkedBy, socketId];
           item.isCheckedByMe = true;
 
@@ -203,19 +204,21 @@ const ItemsList = ({
 
   return (
     <>
-      <Items>
-        {items &&
-          items.map((item, index) => (
-            <Item
-              key={item.id}
-              item={item}
-              mySocketId={socketId}
-              handleClick={() => {
-                handleItemClick(item.id);
-              }}
-            />
-          ))}
-      </Items>
+      {isConnected && (
+        <Items>
+          {items &&
+            items.map((item, index) => (
+              <Item
+                key={item.id}
+                item={item}
+                mySocketId={socketId}
+                handleClick={() => {
+                  handleItemClick(item.id);
+                }}
+              />
+            ))}
+        </Items>
+      )}
     </>
   );
 };
