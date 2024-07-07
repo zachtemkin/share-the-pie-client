@@ -131,6 +131,7 @@ const QrPage = () => {
         }
 
         const data = await response.json();
+        console.log(data.url);
         setQrCode(data.qrCode);
       } catch (error) {
         console.error("Error fetching QR code:", error);
