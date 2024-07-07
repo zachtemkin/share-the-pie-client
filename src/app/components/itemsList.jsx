@@ -57,6 +57,9 @@ const ItemsList = ({
             : item
         )
       );
+      if (myCheckedItems) {
+        calculateSubtotals(myCheckedItems, manualTipAmount);
+      }
     });
 
     socket.on("tipAmountChanged", (data) => {
@@ -153,9 +156,13 @@ const ItemsList = ({
 
   const calculateSubtotals = useCallback(
     (myCheckedItems, manualTipAmount) => {
+      console.log("re calculating");
       if (receiptData && receiptData.transaction) {
         let checkedItemsPrices = [];
         myCheckedItems.map((checkedItem) => {
+          console.log(
+            `${checkedItem.description} is checked by ${checkedItem.checkedBy.length} people`
+          );
           checkedItemsPrices.push(checkedItem.price);
         });
 
