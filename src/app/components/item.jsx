@@ -58,21 +58,20 @@ const CheckBox = styled.div`
 const CheckBoxUnchecked = () => {
   return (
     <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="CheckBoxUnchecked"
-    >
+      width='24'
+      height='24'
+      viewBox='0 0 24 24'
+      fill='none'
+      xmlns='http://www.w3.org/2000/svg'
+      className='CheckBoxUnchecked'>
       <rect
-        x="1"
-        y="1"
-        width="22"
-        height="22"
-        rx="5"
-        stroke="rgba(255,255,255,0.4)"
-        strokeWidth="2"
+        x='1'
+        y='1'
+        width='22'
+        height='22'
+        rx='5'
+        stroke='rgba(255,255,255,0.4)'
+        strokeWidth='2'
       />
     </svg>
   );
@@ -80,14 +79,16 @@ const CheckBoxUnchecked = () => {
 
 const CheckBoxChecked = ({ $isChecked, isCheckedByMe }) => {
   let backgroundColor;
-  if (isCheckedByMe) {
-    backgroundColor = "#000";
-  } else {
-    if ($isChecked) {
+
+  if ($isChecked) {
+    if (isCheckedByMe) {
       backgroundColor = "#000";
-    } else {
-      backgroundColor = "rgb(75, 75, 75)";
     }
+    if (!isCheckedByMe) {
+      backgroundColor = "#b2b2b2";
+    }
+  } else {
+    backgroundColor = "rgb(75, 75, 75)";
   }
 
   let checkColor;
@@ -103,21 +104,20 @@ const CheckBoxChecked = ({ $isChecked, isCheckedByMe }) => {
 
   return (
     <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="CheckBoxChecked"
-    >
+      width='24'
+      height='24'
+      viewBox='0 0 24 24'
+      fill='none'
+      xmlns='http://www.w3.org/2000/svg'
+      className='CheckBoxChecked'>
       <path
-        d="M0 6C0 2.68629 2.68629 0 6 0H18C21.3137 0 24 2.68629 24 6V18C24 21.3137 21.3137 24 18 24H6C2.68629 24 0 21.3137 0 18V6Z"
+        d='M0 6C0 2.68629 2.68629 0 6 0H18C21.3137 0 24 2.68629 24 6V18C24 21.3137 21.3137 24 18 24H6C2.68629 24 0 21.3137 0 18V6Z'
         fill={backgroundColor}
       />
       <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M19.3224 7.1578C18.7031 6.53855 17.6991 6.53855 17.0799 7.1578L10.0371 14.2006L7.10479 11.2683C6.48554 10.649 5.48152 10.649 4.86227 11.2683C4.24301 11.8876 4.24301 12.8916 4.86227 13.5108L8.90736 17.5559C8.96581 17.6144 9.02768 17.6673 9.09233 17.7147C9.71324 18.1774 10.5959 18.1269 11.1596 17.5631L19.3224 9.40033C19.9416 8.78107 19.9416 7.77706 19.3224 7.1578Z"
+        fillRule='evenodd'
+        clipRule='evenodd'
+        d='M19.3224 7.1578C18.7031 6.53855 17.6991 6.53855 17.0799 7.1578L10.0371 14.2006L7.10479 11.2683C6.48554 10.649 5.48152 10.649 4.86227 11.2683C4.24301 11.8876 4.24301 12.8916 4.86227 13.5108L8.90736 17.5559C8.96581 17.6144 9.02768 17.6673 9.09233 17.7147C9.71324 18.1774 10.5959 18.1269 11.1596 17.5631L19.3224 9.40033C19.9416 8.78107 19.9416 7.77706 19.3224 7.1578Z'
         fill={checkColor}
       />
     </svg>
@@ -132,8 +132,7 @@ const Item = ({ item, mySocketId, handleClick }) => {
       onClick={handleClick}
       className={`${isChecked && "isChecked"} ${
         isChecked && item.isCheckedByMe && "isCheckedByMe"
-      }`}
-    >
+      }`}>
       {item.checkedBy
         .filter((socketId) => socketId !== mySocketId)
         .map((socketId) => (
