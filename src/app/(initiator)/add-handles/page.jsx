@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppContext } from "../../AppContext";
 import chooseServer from "@/app/utils/chooseServer";
 import styled from "styled-components";
-import Image from "next/image";
 import Container from "@/app/components/container";
 import Instructions from "@/app/components/instructions";
 import FormField from "@/app/components/formField";

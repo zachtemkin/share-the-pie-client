@@ -2,7 +2,6 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import io from "socket.io-client";
 import styled from "styled-components";
 import Button from "@/app/components/button";
 import ItemsList from "@/app/components/itemsList";
