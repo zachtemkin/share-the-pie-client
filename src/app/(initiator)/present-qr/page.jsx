@@ -89,7 +89,6 @@ const FormFieldWithPrefix = styled.div`
 
 const QrPage = () => {
   const router = useRouter();
-  const [socketId, setSocketId] = useState(null);
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [sessionMembers, setSessionMembers] = useState([]);
   const [qrCode, setQrCode] = useState(null);
@@ -143,12 +142,11 @@ const QrPage = () => {
     getReceiptData(appState.sessionId);
     getQrCode(appState.sessionId);
 
-    function onConnect() {
+    socket.on("connect", () => {
       setIsConnected(true);
-    }
+    });
 
-    socket.on("connect", onConnect);
-    socket.emit("startSession", { sessionId: appState.sessionId, socketId });
+    socket.emit("startSession", { sessionId: appState.sessionId });
   }, []);
 
   const handleSessionMembersChanged = (sessionMembers) => {

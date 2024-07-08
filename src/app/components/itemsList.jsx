@@ -3,6 +3,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useAppContext } from "../AppContext";
 import styled from "styled-components";
+import Instructions from "@/app/components/instructions";
 import Item from "@/app/components/item";
 import socket from "@/app/socket";
 
@@ -31,7 +32,7 @@ const ItemsList = ({
   const { appState, setAppState } = useAppContext();
   const [items, setItems] = useState([]);
   const [manualTipAmount, setManualTipAmount] = useState();
-  const [socketId, setSocketId] = useState("");
+  const [socketId, setSocketId] = useState(socket.id);
 
   const receiptData = appState.receiptData ? appState.receiptData : {};
 
@@ -191,19 +192,23 @@ const ItemsList = ({
 
   return (
     <>
-      <Items>
-        {items &&
-          items.map((item, index) => (
-            <Item
-              key={item.id}
-              item={item}
-              mySocketId={socketId}
-              handleClick={() => {
-                handleItemClick(item.id);
-              }}
-            />
-          ))}
-      </Items>
+      {isConnected ? (
+        <Items>
+          {items &&
+            items.map((item, index) => (
+              <Item
+                key={item.id}
+                item={item}
+                mySocketId={socketId}
+                handleClick={() => {
+                  handleItemClick(item.id);
+                }}
+              />
+            ))}
+        </Items>
+      ) : (
+        <Instructions>Please wait</Instructions>
+      )}
     </>
   );
 };
