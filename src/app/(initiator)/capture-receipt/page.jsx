@@ -49,7 +49,6 @@ const Camera = () => {
   const router = useRouter();
   const { appState, setAppState } = useAppContext();
   const [isUploading, setIsUploading] = useState(false);
-  const [isCameraReady, setIsCameraReady] = useState(false);
 
   async function uploadDocument(imageData) {
     try {
@@ -93,18 +92,11 @@ const Camera = () => {
       .then((stream) => {
         let video = videoRef.current;
         video.srcObject = stream;
-        setIsCameraReady(true);
-
-        // Handle the case where the video fails after starting
-        stream.getVideoTracks()[0].addEventListener("ended", (event) => {
-          console.error("Video track ended due to capture failure:", event);
-          setIsCameraReady(false);
-        });
       })
-      .catch((err) => {
-        console.error("Error accessing media devices.", err);
+      .catch((error) => {
+        console.error("Error accessing camera: ", error);
       });
-  }, [isMobile, videoRef]);
+  }, [isMobile]);
 
   const takePicture = async () => {
     const video = videoRef.current;
@@ -144,9 +136,7 @@ const Camera = () => {
   }, [getVideo, router]);
 
   let instructionText;
-  if (!isCameraReady) {
-    instructionText = "Loading camera feed...";
-  } else if (isUploading) {
+  if (isUploading) {
     instructionText = "Processing receipt...";
   } else {
     instructionText = "Scan a group receipt";
@@ -167,11 +157,7 @@ const Camera = () => {
         playsInline={true}
         $isUploading={isUploading}
       />
-      <Button
-        onClick={takePicture}
-        $size="large"
-        disabled={!isCameraReady || isUploading}
-      >
+      <Button onClick={takePicture} $size="large" disabled={isUploading}>
         Scan
       </Button>
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
