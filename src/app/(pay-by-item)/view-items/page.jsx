@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
-import useChooseServer from "@/app/hooks/useChooseServer";
+import chooseServer from "@/app/utils/chooseServer";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useAppContext } from "../../AppContext";
 import styled from "styled-components";
@@ -53,7 +53,7 @@ const ShowItemsList = () => {
   const router = useRouter();
   const sessionId = searchParams.get("sessionId");
   const { appState, setAppState } = useAppContext();
-  const server = useChooseServer();
+  const server = chooseServer();
 
   useEffect(() => {
     const getReceiptData = async (sessionId) => {
@@ -171,7 +171,7 @@ const ShowItemsList = () => {
         <Container>
           <Instructions>Select the items that you ordered</Instructions>
           <ItemsList
-            joinedFrom='view-items'
+            joinedFrom="view-items"
             sessionId={sessionId}
             onSubtotalsChange={handleSetMySubtotals}
             onMyCheckedItemsChange={handleSetMyCheckedItems}
@@ -212,10 +212,11 @@ const ShowItemsList = () => {
             <Button
               key={key}
               onClick={() => handlePaymentButtonClick(handle, myCheckedItems)}
-              $size='large'
+              $size="large"
               $backgroundColor={handle.color}
-              $textColor='#fff'
-              disabled={myTotal === 0}>
+              $textColor="#fff"
+              disabled={myTotal === 0}
+            >
               Pay {handle.prefix}
               {handle.value} on {handle.label}
             </Button>

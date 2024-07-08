@@ -8,7 +8,7 @@ import Button from "@/app/components/button";
 import ItemsList from "@/app/components/itemsList";
 import { useRouter } from "next/navigation";
 import { useAppContext } from "../../AppContext";
-import useChooseServer from "@/app/hooks/useChooseServer";
+import chooseServer from "@/app/utils/chooseServer";
 import Container from "@/app/components/container";
 import Instructions from "@/app/components/instructions";
 import Card from "@/app/components/card";
@@ -96,7 +96,7 @@ const QrPage = () => {
   const [tipAmount, setTipAmount] = useState(null);
   const [isManualTipAmount, setIsManualTipAmount] = useState(false);
   const { appState, setAppState } = useAppContext();
-  const server = useChooseServer();
+  const server = chooseServer();
 
   useEffect(() => {
     const getReceiptData = async (sessionId) => {

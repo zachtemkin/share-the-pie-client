@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import useDetectDevice from "@/app/hooks/useDetectDevice";
-import useChooseServer from "@/app/hooks/useChooseServer";
+import chooseServer from "@/app/utils/chooseServer";
 import styled from "styled-components";
 import { useAppContext } from "../../AppContext";
 import Container from "@/app/components/container";
@@ -44,7 +44,7 @@ const CameraPreview = styled.video`
 `;
 
 const Camera = () => {
-  const server = useChooseServer();
+  const server = chooseServer();
   const { isMobile } = useDetectDevice();
   const router = useRouter();
   const { appState, setAppState } = useAppContext();

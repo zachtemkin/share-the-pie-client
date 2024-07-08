@@ -3,7 +3,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAppContext } from "../../AppContext";
-import useChooseServer from "@/app/hooks/useChooseServer";
+import chooseServer from "@/app/utils/chooseServer";
 import styled from "styled-components";
 import Image from "next/image";
 import Container from "@/app/components/container";
@@ -18,7 +18,7 @@ const Stack = styled.div`
 `;
 
 const AddHandles = () => {
-  const server = useChooseServer();
+  const server = chooseServer();
   const router = useRouter();
   const { appState, setAppState } = useAppContext();
 
