@@ -88,6 +88,7 @@ const Camera = () => {
     navigator.mediaDevices
       .getUserMedia({
         video: videoObj,
+        audio: false,
       })
       .then((stream) => {
         let video = videoRef.current;
