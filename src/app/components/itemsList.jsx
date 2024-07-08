@@ -207,7 +207,7 @@ const ItemsList = ({
             ))}
         </Items>
       ) : (
-        <Instructions>Please wait</Instructions>
+        <Instructions>Please wait...</Instructions>
       )}
     </>
   );

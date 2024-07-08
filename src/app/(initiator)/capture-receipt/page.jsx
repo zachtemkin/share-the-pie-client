@@ -49,6 +49,7 @@ const Camera = () => {
   const router = useRouter();
   const { appState, setAppState } = useAppContext();
   const [isUploading, setIsUploading] = useState(false);
+  const [isCameraReady, setIsCameraReady] = useState(false);
 
   async function uploadDocument(imageData) {
     try {
@@ -91,6 +92,7 @@ const Camera = () => {
       .then((stream) => {
         let video = videoRef.current;
         video.srcObject = stream;
+        setIsCameraReady(true);
       })
       .catch((err) => {
         console.error("error:", err);
@@ -134,11 +136,18 @@ const Camera = () => {
     hasSessionId ? router.push("/present-qr") : getVideo();
   }, [getVideo, router]);
 
+  let instructionText;
+  if (!isCameraReady) {
+    instructionText = "Loading camera feed...";
+  } else if (isUploading) {
+    instructionText = "Processing receipt...";
+  } else {
+    instructionText = "Scan a group receipt";
+  }
+
   return (
     <Container $isFixedHeight={true}>
-      <Instructions>
-        {!isUploading ? "Scan a group receipt" : "Please wait"}
-      </Instructions>
+      <Instructions>{instructionText}</Instructions>
       {isUploading && (
         <SpinnerContainer>
           <Spinner />
@@ -151,7 +160,11 @@ const Camera = () => {
         playsInline={true}
         $isUploading={isUploading}
       />
-      <Button onClick={takePicture} $size="large" disabled={isUploading}>
+      <Button
+        onClick={takePicture}
+        $size="large"
+        disabled={!isCameraReady || isUploading}
+      >
         Scan
       </Button>
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>

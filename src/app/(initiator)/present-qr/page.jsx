@@ -346,7 +346,7 @@ const QrPage = () => {
         </Container>
       ) : (
         <Container>
-          <Instructions>Please wait</Instructions>
+          <Instructions>Please wait...</Instructions>
         </Container>
       )}
     </>
