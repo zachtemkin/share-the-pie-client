@@ -52,12 +52,21 @@ const ItemsList = ({
 
     socket.on("itemsStatusChanged", (data) => {
       setItems((items) =>
-        items.map((item) =>
-          item.id === data.itemId
+        items.map((item) => {
+          return item.id === data.itemId
             ? { ...item, checkedBy: data.checkedBy }
-            : item
-        )
+            : item;
+        })
       );
+
+      if (myCheckedItems) {
+        let newMyCheckedItems = myCheckedItems.map((myCheckedItem) =>
+          myCheckedItem.id === data.itemId
+            ? { ...myCheckedItem, checkedBy: data.checkedBy }
+            : myCheckedItem
+        );
+        calculateSubtotals(newMyCheckedItems, manualTipAmount);
+      }
     });
 
     socket.on("tipAmountChanged", (data) => {
@@ -90,6 +99,7 @@ const ItemsList = ({
       socket.off("tipAmountChanged");
       socket.off("disconnect");
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onSessionMembersChanged]);
 
   useEffect(() => {
@@ -138,6 +148,7 @@ const ItemsList = ({
             itemId,
             socketIds: [...item.checkedBy, socketId],
           });
+          console.log(socketId);
           item.checkedBy = [...item.checkedBy, socketId];
           item.isCheckedByMe = true;
 
@@ -157,7 +168,9 @@ const ItemsList = ({
       if (receiptData && receiptData.transaction) {
         let checkedItemsPrices = [];
         myCheckedItems.map((checkedItem) => {
-          checkedItemsPrices.push(checkedItem.price);
+          checkedItemsPrices.push(
+            checkedItem.price / checkedItem.checkedBy.length
+          );
         });
 
         let myItems = checkedItemsPrices.reduce(
