@@ -8,7 +8,7 @@ const StyledContainer = styled.div`
   flex-direction: column;
   gap: 1rem;
   padding-top: 1rem;
-  padding-bottom: ${(props) => (props.$isStandalone ? 3 : 2)}rem;
+  padding-bottom: ${(props) => (props.$isStandalone ? 3 : 1)}rem;
   padding-left: 1rem;
   padding-right: 1rem;
 
