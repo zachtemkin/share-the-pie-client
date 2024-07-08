@@ -162,9 +162,9 @@ const Camera = () => {
       )}
       <CameraPreview
         ref={videoRef}
-        autoPlay={true}
-        muted={true}
-        playsInline={true}
+        autoPlay={""}
+        muted={""}
+        playsInline={""}
         $isUploading={isUploading}
       />
       <Button
