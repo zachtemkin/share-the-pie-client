@@ -148,7 +148,6 @@ const ItemsList = ({
             itemId,
             socketIds: [...item.checkedBy, socketId],
           });
-          console.log(socketId);
           item.checkedBy = [...item.checkedBy, socketId];
           item.isCheckedByMe = true;
 
