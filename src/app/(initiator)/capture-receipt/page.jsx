@@ -80,30 +80,48 @@ const Camera = () => {
     const videoObj = isMobile
       ? {
           facingMode: { exact: "environment" },
-          width: { ideal: 3264 / 2 },
-          height: { ideal: 2448 / 2 },
+          // Simplified constraints for compatibility
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
         }
       : true;
+
+    const handleStream = (stream) => {
+      let video = videoRef.current;
+      video.srcObject = stream;
+      setIsCameraReady(true);
+
+      // Handle the case where the video fails after starting
+      stream.getVideoTracks()[0].addEventListener("ended", (event) => {
+        console.error("Video track ended due to capture failure:", event);
+        setIsCameraReady(false);
+        // Optionally retry or handle the failure
+        retryStream();
+      });
+    };
+
+    const handleError = (err) => {
+      console.error("Error accessing media devices.", err);
+      // Optionally retry or handle the failure
+      retryStream();
+    };
+
+    const retryStream = () => {
+      setTimeout(() => {
+        navigator.mediaDevices
+          .getUserMedia({ video: videoObj, audio: false })
+          .then(handleStream)
+          .catch(handleError);
+      }, 1000); // Retry after 1 second
+    };
 
     navigator.mediaDevices
       .getUserMedia({
         video: videoObj,
         audio: false,
       })
-      .then((stream) => {
-        let video = videoRef.current;
-        video.srcObject = stream;
-        setIsCameraReady(true);
-
-        // Handle the case where the video fails after starting
-        stream.getVideoTracks()[0].addEventListener("ended", (event) => {
-          console.error("Video track ended due to capture failure:", event);
-          setIsCameraReady(false);
-        });
-      })
-      .catch((err) => {
-        console.error("Error accessing media devices.", err);
-      });
+      .then(handleStream)
+      .catch(handleError);
   }, [isMobile, videoRef]);
 
   const takePicture = async () => {
