@@ -94,11 +94,17 @@ const Camera = () => {
         let video = videoRef.current;
         video.srcObject = stream;
         setIsCameraReady(true);
+
+        // Handle the case where the video fails after starting
+        stream.getVideoTracks()[0].addEventListener("ended", (event) => {
+          console.error("Video track ended due to capture failure:", event);
+          setIsCameraReady(false);
+        });
       })
       .catch((err) => {
-        console.error("error:", err);
+        console.error("Error accessing media devices.", err);
       });
-  }, [isMobile]);
+  }, [isMobile, videoRef]);
 
   const takePicture = async () => {
     const video = videoRef.current;
