@@ -15,7 +15,9 @@ const FormField = styled.input`
   background-color: ${(props) => props.theme.darkSurfaceColor};
   color: #fff;
   font-family: inherit;
-  transition: all ${(props) => props.theme.motion.defaultTransitionDuration}ms;
+  transition-property: all;
+  transition-duration: ${(props) =>
+    props.theme.motion.defaultTransitionDuration}ms;
   text-indent: ${(props) => props.$textIndent || "1rem"};
 
   @keyframes blink_input_opacity_to_prevent_scrolling_when_focus {

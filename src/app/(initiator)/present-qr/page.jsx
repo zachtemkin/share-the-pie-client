@@ -26,15 +26,15 @@ const QRCode = styled.img`
   overflow: hidden;
   opacity: 1;
   transform: scale(1);
-  transition: opacity,
-    transform ${(props) => props.theme.motion.showQRCodeDuration}ms;
+  transition-property: opacity, transform;
+  transition-duration: ${(props) => props.theme.motion.showQRCodeDuration}ms;
   position: relative;
   z-index: 1;
 
   &:not([src]) {
     // Prevents border that browser adds on images without sources
     // before QR code is generated and shown
-    transform: scale(0.9);
+    transform: scale(0.95);
     opacity: 0;
   }
 `;
@@ -57,8 +57,9 @@ const Suggestion = styled.div`
   color: ${(props) =>
     props.$isSelected ? "rgba(255, 255, 255, 1)" : "rgba(255, 255, 255, 0.5)"};
   padding: 0.75rem;
-  transition: opacity
-    ${(props) => props.theme.motion.defaultTransitionDuration}ms;
+  transition-property: opacity;
+  transition-duration: ${(props) =>
+    props.theme.motion.defaultTransitionDuration}ms;
   height: 100%;
 
   &:active {

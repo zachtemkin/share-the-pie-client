@@ -33,8 +33,9 @@ const CameraContainer = styled.div`
   border-radius: ${(props) => props.theme.surfaceBorderRadius};
   flex: 1;
   overflow: hidden;
-  transition: opacity,
-    transform ${(props) => props.theme.motion.defaultTransitionDuration}ms;
+  transition-property: opacity, transform;
+  transition-duration: ${(props) =>
+    props.theme.motion.defaultTransitionDuration}ms;
 
   ${(props) =>
     props.$isUploading &&
@@ -58,8 +59,9 @@ const CameraPreview = styled.video`
   width: 100%;
   object-fit: cover;
   opacity: ${(props) => (props.$isVisible ? 1 : 0)};
-  transition: opacity
-    ${(props) => props.theme.motion.defaultTransitionDuration}ms;
+  transition-property: opacity;
+  transition-duration: ${(props) =>
+    props.theme.motion.defaultTransitionDuration}ms;
   position: absolute;
   z-index: 1;
 `;

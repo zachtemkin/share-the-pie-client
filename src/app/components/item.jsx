@@ -14,8 +14,9 @@ const ItemWrapper = styled.li`
   min-height: 3.5rem;
   border-radius: ${(props) => props.theme.surfaceBorderRadius};
   background-color: ${(props) => props.theme.darkSurfaceColor};
-  transition: opacity, color,
-    background ${(props) => props.theme.motion.defaultTransitionDuration}ms;
+  transition-property: opacity, color, background;
+  transition-duration: ${(props) =>
+    props.theme.motion.defaultTransitionDuration}ms;
 
   &:active {
     opacity: 0.75;
@@ -43,7 +44,9 @@ const CheckBox = styled.div`
 
   svg {
     position: absolute;
-    transition: all ${(props) => props.theme.motion.defaultTransitionDuration}ms;
+    transition-property: all;
+    transition-duration: ${(props) =>
+      props.theme.motion.defaultTransitionDuration}ms;
   }
 
   .CheckBoxUnchecked {

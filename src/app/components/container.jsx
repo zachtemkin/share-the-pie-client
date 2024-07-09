@@ -14,7 +14,8 @@ const StyledContainer = styled.div`
   padding-left: 1rem;
   padding-right: 1rem;
   opacity: ${(props) => (props.$isVisible ? 1 : 0)};
-  transition: opacity ${(props) => props.theme.motion.fadeInPageDuration}ms;
+  transition-property: opacity;
+  transition-duration: ${(props) => props.theme.motion.fadeInPageDuration}ms;
 
   ${(props) =>
     props.$isFixedHeight &&

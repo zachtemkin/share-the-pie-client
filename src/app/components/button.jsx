@@ -43,8 +43,9 @@ const StyledButton = styled.button`
       background: red;
     `};
 
-  transition: opacity,
-    transform ${(props) => props.theme.motion.defaultTransitionDuration}ms;
+  transition-property: opacity, transform;
+  transition-duration: ${(props) =>
+    props.theme.motion.defaultTransitionDuration}ms;
 
   &:active {
     opacity: 0.75;
