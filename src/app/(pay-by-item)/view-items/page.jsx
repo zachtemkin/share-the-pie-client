@@ -231,6 +231,7 @@ const ShowItemsList = () => {
                 {handle.value} on {handle.label}
               </Button>
             ))}
+            <Gap />
           </Container>
         )}
       </>
