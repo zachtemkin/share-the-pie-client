@@ -15,7 +15,6 @@ const TopOverflowMask = styled.div`
     background-color: transparent;
     bottom: -4rem;
     height: 6rem;
-    margin-left: 1rem;
     width: calc(100vw - 2rem);
     border-top-left-radius: 2rem;
     border-top-right-radius: 2rem;

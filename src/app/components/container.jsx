@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import useDetectStandaloneMode from "@/app/hooks/useDetectStandaloneMode";
+import TopOverflowMask from "@/app/components/topOverflowMask";
+import BottomOverflowMask from "@/app/components/bottomOverflowMask";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -8,7 +10,7 @@ const StyledContainer = styled.div`
   flex-direction: column;
   gap: 1rem;
   padding-top: 1rem;
-  padding-bottom: ${(props) => (props.$isStandalone ? 3 : 2)}rem;
+  padding-bottom: ${(props) => (props.$isStandalone ? 3 : 1)}rem;
   padding-left: 1rem;
   padding-right: 1rem;
 
@@ -19,6 +21,7 @@ const StyledContainer = styled.div`
       height: 100%;
       height: 100dvh;
       overflow: hidden;
+      position: fixed;
     `};
 `;
 
@@ -31,7 +34,9 @@ const Container = ({ isFixedHeight, children, ...rest }) => {
       $isFixedHeight={isFixedHeight}
       {...rest}
     >
+      <TopOverflowMask />
       {children}
+      {(isStandalone || !isFixedHeight) && <BottomOverflowMask />}
     </StyledContainer>
   );
 };

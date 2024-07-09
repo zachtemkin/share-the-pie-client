@@ -16,7 +16,6 @@ const StyledBottomOverflowMask = styled.div`
     background-color: transparent;
     top: -4rem;
     height: 8rem;
-    margin-left: 1rem;
     width: calc(100vw - 2rem);
     border-bottom-left-radius: 2rem;
     border-bottom-right-radius: 2rem;
