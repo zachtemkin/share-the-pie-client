@@ -157,7 +157,7 @@ const ShowItemsList = () => {
       case "Cash App":
         url = `https://cash.app/${handle.prefix}${
           handle.value
-        }/${encodeURIComponent(myTotal)}`;
+        }/${encodeURIComponent(Math.floor(myTotal))}`;
         break;
       case "Venmo":
         url = `https://venmo.com/${
@@ -165,7 +165,7 @@ const ShowItemsList = () => {
         }?txn=pay&note=${encodeURIComponent(note).replaceAll(
           "%20",
           "%C2%A0"
-        )}&amount=${encodeURIComponent(myTotal)} `;
+        )}&amount=${encodeURIComponent(Math.floor(myTotal))} `;
         break;
       default:
         url = "";
