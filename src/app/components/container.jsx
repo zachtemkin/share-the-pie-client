@@ -13,6 +13,8 @@ const StyledContainer = styled.div`
   padding-bottom: ${(props) => (props.$isStandalone ? 3 : 1)}rem;
   padding-left: 1rem;
   padding-right: 1rem;
+  opacity: ${(props) => (props.$isVisible ? 1 : 0)};
+  transition: opacity ${(props) => props.theme.motion.fadeInPageDuration}ms;
 
   ${(props) =>
     props.$isFixedHeight &&
@@ -25,13 +27,14 @@ const StyledContainer = styled.div`
     `};
 `;
 
-const Container = ({ isFixedHeight, children, ...rest }) => {
+const Container = ({ isVisible, isFixedHeight, children, ...rest }) => {
   const isStandalone = useDetectStandaloneMode();
 
   return (
     <StyledContainer
       $isStandalone={isStandalone}
       $isFixedHeight={isFixedHeight}
+      $isVisible={isVisible}
       {...rest}
     >
       <TopOverflowMask />

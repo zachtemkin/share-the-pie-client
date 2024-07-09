@@ -202,26 +202,22 @@ const ItemsList = ({
     }
   }, [myCheckedItems, calculateSubtotals, manualTipAmount]);
 
-  return (
-    <>
-      {isConnected ? (
-        <Items>
-          {items &&
-            items.map((item, index) => (
-              <Item
-                key={item.id}
-                item={item}
-                mySocketId={socketId}
-                handleClick={() => {
-                  handleItemClick(item.id);
-                }}
-              />
-            ))}
-        </Items>
-      ) : (
-        <Instructions>Please wait...</Instructions>
-      )}
-    </>
+  return isConnected ? (
+    <Items>
+      {items &&
+        items.map((item, index) => (
+          <Item
+            key={item.id}
+            item={item}
+            mySocketId={socketId}
+            handleClick={() => {
+              handleItemClick(item.id);
+            }}
+          />
+        ))}
+    </Items>
+  ) : (
+    <Instructions>Please wait...</Instructions>
   );
 };
 

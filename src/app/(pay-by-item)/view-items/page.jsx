@@ -11,6 +11,7 @@ import Button from "../../components/button";
 import ItemsList from "../../components/itemsList";
 import Gap from "@/app/components/gap";
 import FormattedPrice from "@/app/components/formattedPrice";
+import { motion } from "@/app/theme";
 
 const Shares = styled.div`
   display: flex;
@@ -54,8 +55,16 @@ const ShowItemsList = () => {
   const sessionId = searchParams.get("sessionId");
   const { appState, setAppState } = useAppContext();
   const server = chooseServer();
+  const [isContainerReady, setIsContainerReady] = useState(false);
+  const [isContainerVisible, setIsContainerVisible] = useState(false);
 
   useEffect(() => {
+    setIsContainerReady(true);
+
+    setTimeout(() => {
+      setIsContainerVisible(true);
+    }, motion.delayToShowContainer);
+
     const getReceiptData = async (sessionId) => {
       try {
         const response = await fetch(`${server.api}/getReceiptData`, {
@@ -166,64 +175,66 @@ const ShowItemsList = () => {
   };
 
   return (
-    <>
-      {sessionId && (
-        <Container>
-          <Instructions>Select the items that you ordered</Instructions>
-          <ItemsList
-            joinedFrom="view-items"
-            sessionId={sessionId}
-            onSubtotalsChange={handleSetMySubtotals}
-            onMyCheckedItemsChange={handleSetMyCheckedItems}
-            myCheckedItems={myCheckedItems}
-            onSessionMembersChanged={() => {}}
-          />
-          <Gap />
-          <Instructions>Pay for your share</Instructions>
-          {mySubTotals && (
-            <Shares>
-              <Row>
-                <SubtotalLabel>Items</SubtotalLabel>
-                <SubtotalValue>
-                  <FormattedPrice value={mySubTotals["myItems"]} />
-                </SubtotalValue>
-              </Row>
-              <Row>
-                <SubtotalLabel>Tip</SubtotalLabel>
-                <SubtotalValue>
-                  <FormattedPrice value={mySubTotals["myTip"]} />
-                </SubtotalValue>
-              </Row>
-              <Row>
-                <SubtotalLabel>Tax</SubtotalLabel>
-                <SubtotalValue>
-                  <FormattedPrice value={mySubTotals["myTax"]} />
-                </SubtotalValue>
-              </Row>
-              <Row>
-                <TotalLabel>Total</TotalLabel>
-                <TotalValue>
-                  <FormattedPrice value={myTotal} />
-                </TotalValue>
-              </Row>
-            </Shares>
-          )}
-          {handlesArray.map((handle, key) => (
-            <Button
-              key={key}
-              onClick={() => handlePaymentButtonClick(handle, myCheckedItems)}
-              $size="large"
-              $backgroundColor={handle.color}
-              $textColor="#fff"
-              disabled={myTotal === 0}
-            >
-              Pay {handle.prefix}
-              {handle.value} on {handle.label}
-            </Button>
-          ))}
-        </Container>
-      )}
-    </>
+    isContainerReady && (
+      <>
+        {sessionId && (
+          <Container isVisible={isContainerVisible}>
+            <Instructions>Select the items that you ordered</Instructions>
+            <ItemsList
+              joinedFrom="view-items"
+              sessionId={sessionId}
+              onSubtotalsChange={handleSetMySubtotals}
+              onMyCheckedItemsChange={handleSetMyCheckedItems}
+              myCheckedItems={myCheckedItems}
+              onSessionMembersChanged={() => {}}
+            />
+            <Gap />
+            <Instructions>Pay for your share</Instructions>
+            {mySubTotals && (
+              <Shares>
+                <Row>
+                  <SubtotalLabel>Items</SubtotalLabel>
+                  <SubtotalValue>
+                    <FormattedPrice value={mySubTotals["myItems"]} />
+                  </SubtotalValue>
+                </Row>
+                <Row>
+                  <SubtotalLabel>Tip</SubtotalLabel>
+                  <SubtotalValue>
+                    <FormattedPrice value={mySubTotals["myTip"]} />
+                  </SubtotalValue>
+                </Row>
+                <Row>
+                  <SubtotalLabel>Tax</SubtotalLabel>
+                  <SubtotalValue>
+                    <FormattedPrice value={mySubTotals["myTax"]} />
+                  </SubtotalValue>
+                </Row>
+                <Row>
+                  <TotalLabel>Total</TotalLabel>
+                  <TotalValue>
+                    <FormattedPrice value={myTotal} />
+                  </TotalValue>
+                </Row>
+              </Shares>
+            )}
+            {handlesArray.map((handle, key) => (
+              <Button
+                key={key}
+                onClick={() => handlePaymentButtonClick(handle, myCheckedItems)}
+                $size="large"
+                $backgroundColor={handle.color}
+                $textColor="#fff"
+                disabled={myTotal === 0}
+              >
+                Pay {handle.prefix}
+                {handle.value} on {handle.label}
+              </Button>
+            ))}
+          </Container>
+        )}
+      </>
+    )
   );
 };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppContext } from "../../AppContext";
 import chooseServer from "@/app/utils/chooseServer";
@@ -9,6 +9,7 @@ import Container from "@/app/components/container";
 import Instructions from "@/app/components/instructions";
 import FormField from "@/app/components/formField";
 import Button from "@/app/components/button";
+import { motion } from "@/app/theme";
 
 const Stack = styled.div`
   display: flex;
@@ -20,6 +21,16 @@ const AddHandles = () => {
   const server = chooseServer();
   const router = useRouter();
   const { appState, setAppState } = useAppContext();
+  const [isContainerReady, setIsContainerReady] = useState(false);
+  const [isContainerVisible, setIsContainerVisible] = useState(false);
+
+  useEffect(() => {
+    setIsContainerReady(true);
+
+    setTimeout(() => {
+      setIsContainerVisible(true);
+    }, motion.delayToShowContainer);
+  }, []);
 
   const cleanInitiatorData = (key, value) => {
     let cleanedValue = value;
@@ -91,42 +102,47 @@ const AddHandles = () => {
   };
 
   const advanceScreen = () => {
-    router.push("/present-qr");
+    setIsContainerVisible(false);
+    setTimeout(() => {
+      router.push("/present-qr");
+    }, motion.delayBetweenPages);
   };
 
   return (
-    <Container>
-      <Instructions>Add your app usernames</Instructions>
-      <form onSubmit={handleSubmit} autoComplete="off">
-        <Stack>
-          <FormField
-            type="text"
-            id="venmoHandle"
-            value={initiatorData.venmoHandle}
-            onChange={handleChange}
-            placeholder="Venmo"
-            spellCheck="false"
-          />
-          <FormField
-            type="text"
-            id="cashTag"
-            value={initiatorData.cashTag}
-            onChange={handleChange}
-            placeholder="Cash App"
-            spellCheck="false"
-          />
-          <input
-            type="hidden"
-            name="sessionId"
-            value={initiatorData.sessionId}
-            onChange={handleChange}
-          />
-          <Button type="submit" $size="large">
-            Continue
-          </Button>
-        </Stack>
-      </form>
-    </Container>
+    isContainerReady && (
+      <Container isVisible={isContainerVisible}>
+        <Instructions>Add your app usernames</Instructions>
+        <form onSubmit={handleSubmit} autoComplete="off">
+          <Stack>
+            <FormField
+              type="text"
+              id="venmoHandle"
+              value={initiatorData.venmoHandle}
+              onChange={handleChange}
+              placeholder="Venmo"
+              spellCheck="false"
+            />
+            <FormField
+              type="text"
+              id="cashTag"
+              value={initiatorData.cashTag}
+              onChange={handleChange}
+              placeholder="Cash App"
+              spellCheck="false"
+            />
+            <input
+              type="hidden"
+              name="sessionId"
+              value={initiatorData.sessionId}
+              onChange={handleChange}
+            />
+            <Button type="submit" $size="large">
+              Continue
+            </Button>
+          </Stack>
+        </form>
+      </Container>
+    )
   );
 };
 

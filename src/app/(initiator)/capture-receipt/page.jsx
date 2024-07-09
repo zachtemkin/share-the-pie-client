@@ -10,6 +10,7 @@ import Container from "@/app/components/container";
 import Instructions from "@/app/components/instructions";
 import Button from "@/app/components/button";
 import Spinner from "@/app/components/spinner";
+import { motion } from "@/app/theme";
 
 const SpinnerContainer = styled.div`
   position: absolute;
@@ -17,15 +18,13 @@ const SpinnerContainer = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  margin-top: -1.5rem;
+  margin-top: ${(props) => (props.$isOpticallyCentered ? -1 : 0)}rem;
 `;
 
-const CameraPreview = styled.video`
-  z-index: 1;
+const CameraContainer = styled.div`
+  position: relative;
   top: 0;
   bottom: 0;
-  background-size: cover;
-  overflow: hidden;
   height: auto;
   min-height: calc(100% - 8rem);
   background: rgba(255, 255, 255, 0.125);
@@ -33,14 +32,36 @@ const CameraPreview = styled.video`
   object-fit: cover;
   border-radius: ${(props) => props.theme.surfaceBorderRadius};
   flex: 1;
-  transition: 0.2s all;
+  overflow: hidden;
+  transition: opacity,
+    transform ${(props) => props.theme.motion.defaultTransitionDuration}ms;
 
   ${(props) =>
-    props.$isUploading === true &&
+    props.$isUploading &&
     `
       opacity: 0.25;
       transform: scale(0.8)
     `};
+`;
+
+const CameraLoading = styled.div`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  opacity: ${(props) => (props.$isVisible ? 1 : 0)};
+`;
+
+const CameraPreview = styled.video`
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  opacity: ${(props) => (props.$isVisible ? 1 : 0)};
+  transition: opacity
+    ${(props) => props.theme.motion.defaultTransitionDuration}ms;
+  position: absolute;
+  z-index: 1;
 `;
 
 const Camera = () => {
@@ -50,6 +71,16 @@ const Camera = () => {
   const { appState, setAppState } = useAppContext();
   const [isUploading, setIsUploading] = useState(false);
   const [isCameraReady, setIsCameraReady] = useState(false);
+  const [isContainerReady, setIsContainerReady] = useState(false);
+  const [isContainerVisible, setIsContainerVisible] = useState(false);
+
+  useEffect(() => {
+    setIsContainerReady(true);
+
+    setTimeout(() => {
+      setIsContainerVisible(true);
+    }, motion.delayToShowContainer);
+  }, []);
 
   async function uploadDocument(imageData) {
     try {
@@ -93,7 +124,9 @@ const Camera = () => {
       .then((stream) => {
         let video = videoRef.current;
         video.srcObject = stream;
-        setIsCameraReady(true);
+        setTimeout(() => {
+          setIsCameraReady(true);
+        }, motion.delayToShowCamera);
       })
       .catch((error) => {
         setIsCameraReady(false);
@@ -120,9 +153,12 @@ const Camera = () => {
 
       try {
         let data = await uploadDocument(imageData);
-        video.srcObject.getTracks()[0].stop();
+        setIsContainerVisible(false);
         setAppState({ sessionId: data.sessionId });
-        router.push("/add-handles");
+        setTimeout(() => {
+          video.srcObject.getTracks()[0].stop();
+          router.push("/add-handles");
+        }, motion.delayBetweenPages);
       } catch (error) {
         alert(error);
       }
@@ -140,7 +176,7 @@ const Camera = () => {
 
   let instructionText;
   if (!isCameraReady) {
-    instructionText = "Loading camera feed...";
+    instructionText = "Loading camera...";
   } else if (isUploading) {
     instructionText = "Processing receipt...";
   } else {
@@ -148,29 +184,38 @@ const Camera = () => {
   }
 
   return (
-    <Container $isFixedHeight={true}>
-      <Instructions>{instructionText}</Instructions>
-      {isUploading && (
-        <SpinnerContainer>
-          <Spinner />
-        </SpinnerContainer>
-      )}
-      <CameraPreview
-        ref={videoRef}
-        autoPlay={true}
-        muted={true}
-        playsInline={true}
-        $isUploading={isUploading}
-      />
-      <Button
-        onClick={takePicture}
-        $size="large"
-        disabled={!isCameraReady || isUploading}
-      >
-        Scan
-      </Button>
-      <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
-    </Container>
+    isContainerReady && (
+      <Container $isFixedHeight={true} isVisible={isContainerVisible}>
+        <Instructions>{instructionText}</Instructions>
+        {isUploading && (
+          <SpinnerContainer $isOpticallyCentered={true}>
+            <Spinner />
+          </SpinnerContainer>
+        )}
+        <CameraContainer $isUploading={isUploading}>
+          <CameraPreview
+            ref={videoRef}
+            autoPlay={true}
+            muted={true}
+            playsInline={true}
+            $isVisible={isCameraReady}
+          />
+          <CameraLoading $isVisible={!isCameraReady}>
+            <SpinnerContainer $isOpticallyCentered={false}>
+              <Spinner />
+            </SpinnerContainer>
+          </CameraLoading>
+        </CameraContainer>
+        <Button
+          onClick={takePicture}
+          $size="large"
+          disabled={!isCameraReady || isUploading}
+        >
+          Scan
+        </Button>
+        <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
+      </Container>
+    )
   );
 };
 

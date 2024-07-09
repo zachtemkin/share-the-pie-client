@@ -16,6 +16,7 @@ import SessionMembersIndicator from "@/app/components/sessionMembersIndicator";
 import Gap from "@/app/components/gap";
 import { debounce } from "lodash";
 import socket from "@/app/socket";
+import { motion } from "@/app/theme";
 
 const QRCode = styled.img`
   width: calc(100vw - 2rem);
@@ -25,7 +26,8 @@ const QRCode = styled.img`
   overflow: hidden;
   opacity: 1;
   transform: scale(1);
-  transition: 0.8s all;
+  transition: opacity,
+    transform ${(props) => props.theme.motion.showQRCodeDuration}ms;
   position: relative;
   z-index: 1;
 
@@ -55,12 +57,12 @@ const Suggestion = styled.div`
   color: ${(props) =>
     props.$isSelected ? "rgba(255, 255, 255, 1)" : "rgba(255, 255, 255, 0.5)"};
   padding: 0.75rem;
-  transition: 0.2s all;
+  transition: opacity
+    ${(props) => props.theme.motion.defaultTransitionDuration}ms;
   height: 100%;
 
   &:active {
     opacity: 0.5;
-    transform: scale(0.95);
   }
 `;
 
@@ -96,7 +98,16 @@ const QrPage = () => {
   const { appState, setAppState } = useAppContext();
   const server = chooseServer();
 
+  const [isContainerReady, setIsContainerReady] = useState(false);
+  const [isContainerVisible, setIsContainerVisible] = useState(false);
+
   useEffect(() => {
+    setIsContainerReady(true);
+
+    setTimeout(() => {
+      setIsContainerVisible(true);
+    }, motion.delayToShowContainer);
+
     const getReceiptData = async (sessionId) => {
       try {
         const response = await fetch(`${server.api}/getReceiptData`, {
@@ -213,142 +224,145 @@ const QrPage = () => {
   };
 
   return (
-    <>
-      {appState.sessionId &&
-      appState.receiptData &&
-      appState.receiptData.transaction &&
-      isConnected ? (
-        <Container>
-          <Instructions>Show this code to everyone</Instructions>
-          <Card>
-            <QRCode src={qrCode} draggable={false} />
-            <SessionMembersIndicator
-              isConnected={isConnected}
-              sessionMembers={sessionMembers}
+    isContainerReady && (
+      <>
+        {appState.sessionId &&
+        appState.receiptData &&
+        appState.receiptData.transaction &&
+        isConnected ? (
+          <Container $isVisible={isContainerVisible}>
+            <Instructions>Show this code to everyone</Instructions>
+            <Card>
+              <QRCode src={qrCode} draggable={false} />
+              <SessionMembersIndicator
+                isConnected={isConnected}
+                sessionMembers={sessionMembers}
+              />
+            </Card>
+            <Gap />
+            {(tipAmount == null || isManualTipAmount === true) && (
+              <>
+                <Instructions>Record tip amount</Instructions>
+                <FormFieldWithSuggestions>
+                  <Suggestions>
+                    <Suggestion
+                      onClick={() => {
+                        handleSetTipAmount(
+                          (
+                            Math.round(
+                              (appState.receiptData.transaction.total -
+                                appState.receiptData.transaction.tax) *
+                                18
+                            ) / 100
+                          ).toFixed(2)
+                        );
+                      }}
+                      $isSelected={
+                        parseFloat(tipAmount) ===
+                        Math.round(
+                          (appState.receiptData.transaction.total -
+                            appState.receiptData.transaction.tax) *
+                            18
+                        ) /
+                          100
+                      }
+                    >
+                      18%
+                    </Suggestion>
+                    <Suggestion
+                      onClick={() => {
+                        handleSetTipAmount(
+                          (
+                            Math.round(
+                              (appState.receiptData.transaction.total -
+                                appState.receiptData.transaction.tax) *
+                                20
+                            ) / 100
+                          ).toFixed(2)
+                        );
+                      }}
+                      $isSelected={
+                        parseFloat(tipAmount) ===
+                        Math.round(
+                          (appState.receiptData.transaction.total -
+                            appState.receiptData.transaction.tax) *
+                            20
+                        ) /
+                          100
+                      }
+                    >
+                      20%
+                    </Suggestion>
+                    <Suggestion
+                      onClick={() => {
+                        handleSetTipAmount(
+                          (
+                            Math.round(
+                              (appState.receiptData.transaction.total -
+                                appState.receiptData.transaction.tax) *
+                                22
+                            ) / 100
+                          ).toFixed(2)
+                        );
+                      }}
+                      $isSelected={
+                        parseFloat(tipAmount) ===
+                        Math.round(
+                          (appState.receiptData.transaction.total -
+                            appState.receiptData.transaction.tax) *
+                            22
+                        ) /
+                          100
+                      }
+                    >
+                      22%
+                    </Suggestion>
+                  </Suggestions>
+                  <FormFieldWithPrefix>
+                    <FormField
+                      type="text"
+                      id="manualTipAmount"
+                      value={tipAmount || ""}
+                      onChange={(e) => {
+                        handleSetTipAmount(e.target.value);
+                      }}
+                      placeholder="0.00"
+                      spellCheck="false"
+                      $textIndent="1.5rem"
+                      $prefix="$"
+                    />
+                    <Prefix>$</Prefix>
+                  </FormFieldWithPrefix>
+                </FormFieldWithSuggestions>
+                <Gap />
+              </>
+            )}
+            <Instructions>Select the items that you ordered</Instructions>
+            <ItemsList
+              joinedFrom="present-qr"
+              sessionId={appState.sessionId}
+              onSubtotalsChange={handleSetMySubtotals}
+              onMyCheckedItemsChange={handleSetMyCheckedItems}
+              myCheckedItems={myCheckedItems}
+              onSessionMembersChanged={handleSessionMembersChanged}
             />
-          </Card>
-          <Gap />
-          {(tipAmount == null || isManualTipAmount === true) && (
-            <>
-              <Instructions>Record tip amount</Instructions>
-              <FormFieldWithSuggestions>
-                <Suggestions>
-                  <Suggestion
-                    onClick={() => {
-                      handleSetTipAmount(
-                        (
-                          Math.round(
-                            (appState.receiptData.transaction.total -
-                              appState.receiptData.transaction.tax) *
-                              18
-                          ) / 100
-                        ).toFixed(2)
-                      );
-                    }}
-                    $isSelected={
-                      parseFloat(tipAmount) ===
-                      Math.round(
-                        (appState.receiptData.transaction.total -
-                          appState.receiptData.transaction.tax) *
-                          18
-                      ) /
-                        100
-                    }
-                  >
-                    18%
-                  </Suggestion>
-                  <Suggestion
-                    onClick={() => {
-                      handleSetTipAmount(
-                        (
-                          Math.round(
-                            (appState.receiptData.transaction.total -
-                              appState.receiptData.transaction.tax) *
-                              20
-                          ) / 100
-                        ).toFixed(2)
-                      );
-                    }}
-                    $isSelected={
-                      parseFloat(tipAmount) ===
-                      Math.round(
-                        (appState.receiptData.transaction.total -
-                          appState.receiptData.transaction.tax) *
-                          20
-                      ) /
-                        100
-                    }
-                  >
-                    20%
-                  </Suggestion>
-                  <Suggestion
-                    onClick={() => {
-                      handleSetTipAmount(
-                        (
-                          Math.round(
-                            (appState.receiptData.transaction.total -
-                              appState.receiptData.transaction.tax) *
-                              22
-                          ) / 100
-                        ).toFixed(2)
-                      );
-                    }}
-                    $isSelected={
-                      parseFloat(tipAmount) ===
-                      Math.round(
-                        (appState.receiptData.transaction.total -
-                          appState.receiptData.transaction.tax) *
-                          22
-                      ) /
-                        100
-                    }
-                  >
-                    22%
-                  </Suggestion>
-                </Suggestions>
-                <FormFieldWithPrefix>
-                  <FormField
-                    type="text"
-                    id="manualTipAmount"
-                    value={tipAmount || ""}
-                    onChange={(e) => {
-                      handleSetTipAmount(e.target.value);
-                    }}
-                    placeholder="0.00"
-                    spellCheck="false"
-                    $textIndent="1.5rem"
-                    $prefix="$"
-                  />
-                  <Prefix>$</Prefix>
-                </FormFieldWithPrefix>
-              </FormFieldWithSuggestions>
-              <Gap />
-            </>
-          )}
-          <Instructions>Select the items that you ordered</Instructions>
-          <ItemsList
-            joinedFrom="present-qr"
-            sessionId={appState.sessionId}
-            onSubtotalsChange={handleSetMySubtotals}
-            onMyCheckedItemsChange={handleSetMyCheckedItems}
-            myCheckedItems={myCheckedItems}
-            onSessionMembersChanged={handleSessionMembersChanged}
-          />
-          <Gap />
-          <Button
-            onClick={handleClearAppState}
-            $size="large"
-            $isDestructive={true}
-          >
-            Stop sharing
-          </Button>
-        </Container>
-      ) : (
-        <Container>
-          <Instructions>Please wait...</Instructions>
-        </Container>
-      )}
-    </>
+            <Gap />
+            <Button
+              onClick={handleClearAppState}
+              $size="large"
+              $isDestructive={true}
+            >
+              Stop sharing
+            </Button>
+            <Gap />
+          </Container>
+        ) : (
+          <Container isVisible={isContainerVisible}>
+            <Instructions>Please wait...</Instructions>
+          </Container>
+        )}
+      </>
+    )
   );
 };
 
