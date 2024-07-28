@@ -2,8 +2,14 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
-  RewriteRule ^index\.html$ - [L]
+
+  # Redirect root URL to /capture-receipt
+  RewriteRule ^$ /capture-receipt [R=301,L]
+
+  # Skip files and directories that already exist
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /index.html [L]
+
+  # Add .html to the requested URL
+  RewriteRule ^(.*)$ $1.html [L]
 </IfModule>
