@@ -122,6 +122,7 @@ const AddHandles = () => {
               placeholder="Venmo"
               spellCheck="false"
               autocorrect="off"
+              autocapitalize="none"
             />
             <FormField
               type="text"
@@ -131,6 +132,7 @@ const AddHandles = () => {
               placeholder="Cash App"
               spellCheck="false"
               autocorrect="off"
+              autocapitalize="none"
             />
             <input
               type="hidden"
