@@ -200,7 +200,7 @@ const ItemsList = ({
     if (myCheckedItems) {
       calculateSubtotals(myCheckedItems, manualTipAmount);
     }
-  }, [myCheckedItems, calculateSubtotals, manualTipAmount, items]);
+  }, [myCheckedItems, calculateSubtotals, manualTipAmount]);
 
   return isConnected ? (
     <Items>
