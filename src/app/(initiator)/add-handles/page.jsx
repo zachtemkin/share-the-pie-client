@@ -121,6 +121,7 @@ const AddHandles = () => {
               onChange={handleChange}
               placeholder="Venmo"
               spellCheck="false"
+              autocorrect="off"
             />
             <FormField
               type="text"
@@ -129,6 +130,7 @@ const AddHandles = () => {
               onChange={handleChange}
               placeholder="Cash App"
               spellCheck="false"
+              autocorrect="off"
             />
             <input
               type="hidden"
