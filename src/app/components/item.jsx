@@ -153,7 +153,11 @@ const Item = ({ item, mySocketId, handleClick }) => {
         <CheckBoxChecked isCheckedByMe={true} $isChecked={item.isCheckedByMe} />
         <CheckBoxUnchecked />
       </CheckBox>
-      <Description>{item.description}</Description>
+      <Description>
+        {item.quantity > 1
+          ? `${item.quantity} × ${item.description}`
+          : item.description}
+      </Description>
       <FormattedPrice
         value={
           item.price / (item.checkedBy.length > 0 ? item.checkedBy.length : 1)
