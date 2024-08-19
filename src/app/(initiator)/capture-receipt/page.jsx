@@ -187,7 +187,7 @@ const Camera = () => {
 
   return (
     isContainerReady && (
-      <Container $isFixedHeight={true} isVisible={isContainerVisible}>
+      <Container isFixedHeight={true} isVisible={isContainerVisible}>
         <Instructions>{instructionText}</Instructions>
         {isUploading && (
           <SpinnerContainer $isOpticallyCentered={true}>
