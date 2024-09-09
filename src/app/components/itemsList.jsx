@@ -6,6 +6,7 @@ import styled from "styled-components";
 import Instructions from "@/app/components/instructions";
 import Item from "@/app/components/item";
 import socket from "@/app/socket";
+import { on } from "stream";
 
 const Items = styled.ul`
   width: 100%;
@@ -33,8 +34,18 @@ const ItemsList = ({
   const [items, setItems] = useState([]);
   const [manualTipAmount, setManualTipAmount] = useState();
   const [socketId, setSocketId] = useState(socket.id);
+  const [localStorageItems, setLocalStorageItems] = useState([]);
 
   const receiptData = appState.receiptData ? appState.receiptData : {};
+
+  const saveToLocalStorage = (items) => {
+    localStorage.setItem(
+      `share-the-pie-session-${sessionId}`,
+      JSON.stringify({
+        myCheckedItems: items,
+      })
+    );
+  };
 
   useEffect(() => {
     setItems(
@@ -128,6 +139,11 @@ const ItemsList = ({
                 (myCheckedItem) => myCheckedItem.id !== itemId
               )
             );
+            saveToLocalStorage(
+              myCheckedItems.filter(
+                (myCheckedItem) => myCheckedItem.id !== itemId
+              )
+            );
           } else {
             socket.emit("setItemChecked", {
               sessionId,
@@ -141,6 +157,7 @@ const ItemsList = ({
               ...myCheckedItems,
               item,
             ]);
+            saveToLocalStorage([...myCheckedItems, item]);
           }
         } else {
           socket.emit("setItemChecked", {
@@ -152,6 +169,7 @@ const ItemsList = ({
           item.isCheckedByMe = true;
 
           onMyCheckedItemsChange((myCheckedItems) => [...myCheckedItems, item]);
+          saveToLocalStorage([...myCheckedItems, item]);
         }
         return item;
       } else {
@@ -202,19 +220,47 @@ const ItemsList = ({
     }
   }, [myCheckedItems, calculateSubtotals, manualTipAmount]);
 
+  useEffect(() => {
+    const readFromLocalStorage = () => {
+      const localStorageItems = localStorage.getItem(
+        `share-the-pie-session-${sessionId}`
+      );
+      if (localStorageItems) {
+        return JSON.parse(localStorageItems).myCheckedItems;
+      }
+    };
+
+    const localStorageItems = readFromLocalStorage();
+    setLocalStorageItems(localStorageItems);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return isConnected ? (
     <Items>
+      <Instructions>{socketId}</Instructions>
       {items &&
-        items.map((item, index) => (
-          <Item
-            key={item.id}
-            item={item}
-            mySocketId={socketId}
-            handleClick={() => {
-              handleItemClick(item.id);
-            }}
-          />
-        ))}
+        items.map((item, index) => {
+          if (localStorageItems) {
+            const itemIsInLocalStorage = localStorageItems.find(
+              (localStorageItem) => localStorageItem.id === item.id
+            );
+            if (itemIsInLocalStorage) {
+              item.checkedBy = [...item.checkedBy, socketId];
+              item.isCheckedByMe = true;
+            }
+          }
+
+          return (
+            <Item
+              key={item.id}
+              item={item}
+              mySocketId={socketId}
+              handleClick={() => {
+                handleItemClick(item.id);
+              }}
+            />
+          );
+        })}
     </Items>
   ) : (
     <Instructions>Please wait...</Instructions>

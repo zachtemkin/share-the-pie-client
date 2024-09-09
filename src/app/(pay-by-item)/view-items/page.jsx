@@ -180,6 +180,7 @@ const ShowItemsList = () => {
         {sessionId && (
           <Container isVisible={isContainerVisible}>
             <Instructions>Select the items that you ordered</Instructions>
+            <Instructions>{sessionId}</Instructions>
             <ItemsList
               joinedFrom="view-items"
               sessionId={sessionId}
